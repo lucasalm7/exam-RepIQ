@@ -1,35 +1,49 @@
 @import './base.css';
+@import "tailwindcss";
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+@theme {
+  /* Canvas & Glassmorphism Surfaces */
+  --color-background: oklch(0.12 0.015 280);         /* Ultra Deep Black/Navy (#08080C) */
+  --color-surface: oklch(0.22 0.01 280 / 0.45);      /* Translucent Glass Card Background */
+  --color-surface-hover: oklch(0.28 0.01 280 / 0.6); /* Glass Hover State */
+  --color-surface-border: oklch(1 0 0 / 0.12);       /* Subtle 1px White Glass Border */
+
+  /* Highlight & Accent (Vivid Neon Pink / Magenta) */
+  --color-primary: oklch(0.65 0.29 328);             /* Strong Neon Pink (#FF2E93) */
+  --color-primary-hover: oklch(0.58 0.28 328);       /* Deep Magenta */
+  --color-primary-muted: oklch(0.65 0.29 328 / 0.15); /* Soft Pink Glow / Ring Fill */
+
+  /* Secondary Accents & Statuses */
+  --color-success: oklch(0.75 0.18 155);             /* Vibrant Mint Green */
+  --color-success-muted: oklch(0.75 0.18 155 / 0.15);
+  
+  --color-accent: oklch(0.68 0.22 300);              /* Neon Orchid Violet */
+
+  /* Glass Effects */
+  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
+html, body, #app {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  background: var(--color-background);
+  color: #f4f4f5;
 }
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
+body {
+  font-family: var(--font-sans);
 }
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
+/* Reusable Glass Utility Class */
+.glass-panel {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-surface-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: var(--shadow-glass);
 }
