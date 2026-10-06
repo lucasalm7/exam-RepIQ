@@ -21,6 +21,7 @@ export const COLLECTIONS = {
   GOALS: '6aad497d0008ecae7a30',            
   FRIENDSHIPS: '6aad4a02001afa9b3996', 
   SOCIAL_FEED: '6aad4a84000989965de1', 
+  CALENDAR: '6ac4af3c0008ea229861',
 };
 
 export { client };

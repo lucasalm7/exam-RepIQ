@@ -6,7 +6,6 @@ import { useMealsStore } from '@/stores/meals'
 
 const mealsStore = useMealsStore()
 
-const showAiScanner = ref(false)
 const showMealForm = ref(false)
 const selectedMeal = ref(null)
 const editingMeal = ref(null)
@@ -253,8 +252,6 @@ onMounted(() => {
         </div>
       </section>
     </div>
-
-    <AiScannerModal v-if="showAiScanner" @close="showAiScanner = false" />
 
     <MealFormModal v-if="showMealForm" :editing-meal="editingMeal" :is-loading="mealsStore.isLoading" @submit="handleMealSubmit" @close="closeMealForm" />
   </div>

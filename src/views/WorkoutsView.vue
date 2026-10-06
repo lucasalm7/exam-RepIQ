@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
-import ExerciseSelector from '@/components/exercises/ExerciseSelector.vue'
-import ExerciseFormModal from '@/components/exercises/ExerciseFormModal.vue'
+import ExerciseSelector from '@/components/workouts/ExerciseSelector.vue'
+import ExerciseFormModal from '@/components/workouts/ExerciseFormModal.vue'
 import { useWorkoutsStore } from '@/stores/workouts'
 
 const workoutsStore = useWorkoutsStore()
