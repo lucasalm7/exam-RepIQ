@@ -85,7 +85,7 @@ function submit() {
         </div>
 
         <button type="button" aria-label="Close meal form" class="text-xl text-zinc-500 transition hover:text-white" @click="emit('close')" >
-          s
+          x
         </button>
       </div>
 

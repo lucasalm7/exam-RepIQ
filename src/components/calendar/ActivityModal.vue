@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import ExerciseSelector from './ExerciseSelector.vue'
+import ExerciseSelector from '../exercises/ExerciseSelector.vue/index.js'
 
 const emit = defineEmits(['close', 'select'])
 
@@ -22,7 +22,7 @@ function handleExerciseSelect(exercise) {
         </div>
 
         <button type="button" class="text-xl text-zinc-500 hover:text-white" @click="emit('close')" >
-          ×
+          x
         </button>
       </div>
 

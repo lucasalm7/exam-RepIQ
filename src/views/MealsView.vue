@@ -1,7 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import PresetMealSelector from '@/components/meals/PresetMealSelector.vue'
-import AiScannerModal from '@/components/meals/AiScannerModal.vue'
 import MealFormModal from '@/components/meals/MealFormModal.vue'
 import { useMealsStore } from '@/stores/meals'
 
@@ -240,6 +239,15 @@ onMounted(() => {
                 <span class="block text-[10px] uppercase text-zinc-500">Fats</span>
                 <strong class="text-xs text-white">{{ meal.fats }}g</strong>
               </div>
+            </div>
+
+            <div class="instructions">
+              <h4 class="mt-4 text-xs font-semibold uppercase tracking-wider text-zinc-400">
+                Recipe instructions
+              </h4>
+              <p class="mt-1 whitespace-pre-line text-sm leading-6 text-zinc-300">
+                {{ meal.instructions || 'No recipe instructions available.' }}
+              </p>
             </div>
           </article>
         </div>

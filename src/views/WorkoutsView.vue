@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue'
-import ExerciseSelector from '@/components/calendar/ExerciseSelector.vue'
+import ExerciseSelector from '@/components/exercises/ExerciseSelector.vue'
 import ExerciseFormModal from '@/components/exercises/ExerciseFormModal.vue'
 import { useWorkoutsStore } from '@/stores/workouts'
 
