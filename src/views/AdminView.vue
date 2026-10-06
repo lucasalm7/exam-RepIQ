@@ -5,8 +5,8 @@ import { usePermissions } from '@/composables/usePermissions'
 import { useModalState } from '@/composables/useModalState'
 import { useAuthStore } from '@/stores/auth'
 
-import ExerciseTable from '@/components/exercises/ExerciseTable.vue'
-import ExerciseFormModal from '@/components/exercises/ExerciseFormModal.vue'
+import ExerciseTable from '@/components/workouts/ExerciseTable.vue'
+import ExerciseFormModal from '@/components/workouts/ExerciseFormModal.vue'
 import MealTable from '@/components/meals/MealTable.vue'
 import MealFormModal from '@/components/meals/MealFormModal.vue'
 
