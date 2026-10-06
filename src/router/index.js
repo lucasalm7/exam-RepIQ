@@ -48,12 +48,12 @@ const routes = [
     path: '/admin',
     name: 'admin',
     component: () => import('@/views/AdminView.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true }
+    meta: { requiresAuth: true, requiresStaff: true }
   },
   {
     path: '/:pathMatch(.*)*',
     name: 'not-found',
-    component: () => import('@/views/NotFoundView.vue')
+    redirect: '/',
   }
 ]
 
@@ -63,30 +63,30 @@ const router = createRouter({
 })
 
 // Navigation Guards
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to) => {
   const authStore = useAuthStore()
 
-  // Initialize auth session if not checked yet
   if (!authStore.isInitialized) {
     await authStore.fetchCurrentUser()
   }
 
   const isAuthenticated = authStore.isAuthenticated
-  const isAdmin = authStore.isAdmin
+  const hasProfile = Boolean(authStore.userProfile)
+  const canAccessAdmin = authStore.canAccessAdmin
 
-  if (to.meta.requiresAuth && !isAuthenticated) {
-    return next({ name: 'auth' })
+  if (to.meta.requiresAuth && (!isAuthenticated || (!hasProfile && !canAccessAdmin))) {
+    return { name: 'auth' }
   }
 
-  if (to.meta.requiresGuest && isAuthenticated) {
-    return next({ name: 'overview' })
+  if (to.meta.requiresGuest && isAuthenticated && hasProfile) {
+    return { name: 'overview' }
   }
 
-  if (to.meta.requiresAdmin && !isAdmin) {
-    return next({ name: 'overview' })
+  if (to.meta.requiresStaff && !canAccessAdmin) {
+    return { name: 'overview' }
   }
 
-  next()
+  return true
 })
 
 export default router

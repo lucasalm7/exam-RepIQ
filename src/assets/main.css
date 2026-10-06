@@ -2,27 +2,24 @@
 @import "tailwindcss";
 
 @theme {
-  /* Canvas & Glassmorphism Surfaces */
-  --color-background: oklch(0.12 0.015 280);         /* Ultra Deep Black/Navy (#08080C) */
-  --color-surface: oklch(0.22 0.01 280 / 0.45);      /* Translucent Glass Card Background */
-  --color-surface-hover: oklch(0.28 0.01 280 / 0.6); /* Glass Hover State */
-  --color-surface-border: oklch(1 0 0 / 0.12);       /* Subtle 1px White Glass Border */
+  --color-background: rgb(8, 8, 12); /* Background Color */
+  --color-surface: rgba(34, 34, 42, 0.45); 
+  --color-surface-hover: rgba(42, 42, 52, 0.6);
+  --color-surface-border: rgba(255, 255, 255, 0.12); 
 
-  /* Highlight & Accent (Vivid Neon Pink / Magenta) */
-  --color-primary: oklch(0.65 0.29 328);             /* Strong Neon Pink (#FF2E93) */
-  --color-primary-hover: oklch(0.58 0.28 328);       /* Deep Magenta */
-  --color-primary-muted: oklch(0.65 0.29 328 / 0.15); /* Soft Pink Glow / Ring Fill */
+  /* Highlight ( Pink / Magenta) */
+  --color-primary: rgb(255, 46, 147); /* Pink  */
+  --color-primary-hover: rgb(214, 29, 112); /* Darker Pink  */
+  --color-primary-muted: rgba(255, 46, 147, 0.15); /* Pink  */
 
-  /* Secondary Accents & Statuses */
-  --color-success: oklch(0.75 0.18 155);             /* Vibrant Mint Green */
-  --color-success-muted: oklch(0.75 0.18 155 / 0.15);
-  
-  --color-accent: oklch(0.68 0.22 300);              /* Neon Orchid Violet */
+  /* Secondary*/
+  --color-success: rgb(35, 205, 145); /* Green  */
+  --color-success-muted: rgba(35, 205, 145, 0.15); /* Green  */
 
-  /* Glass Effects */
+  --color-accent: rgb(178, 88, 255); /* Purple  */
+
   --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 
-  /* Typography */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
 

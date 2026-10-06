@@ -1,18 +1,36 @@
-<template>
-  <section class="activity-modal">
-    <h3>Activity modal</h3>
-  </section>
-</template>
-
 <script setup>
+import { ref } from 'vue'
+import ExerciseSelector from './ExerciseSelector.vue'
+
+const emit = defineEmits(['close', 'select'])
+
+const selectedExercise = ref(null)
+
+function handleExerciseSelect(exercise) {
+  selectedExercise.value = exercise
+  emit('select', exercise)
+}
 </script>
 
-<style scoped>
-.activity-modal {
-  padding: 1rem;
-  border: 1px solid #2a2a2a;
-  border-radius: 12px;
-  background: #111827;
-  color: white;
-}
-</style>
+<template>
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
+    <section class="w-full max-w-2xl rounded-2xl border border-surface-border bg-background p-6 shadow-glass">
+      <div class="mb-6 flex items-start justify-between border-b border-surface-border pb-4">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary"> Workout log </p>
+          <h2 class="mt-1 text-xl font-bold text-white"> Log an exercise </h2>
+        </div>
+
+        <button type="button" class="text-xl text-zinc-500 hover:text-white" @click="emit('close')" >
+          ×
+        </button>
+      </div>
+
+      <ExerciseSelector @select="handleExerciseSelect" />
+
+      <div v-if="selectedExercise" class="mt-5 rounded-xl border border-success/20 bg-success-muted p-3 text-sm text-success">
+        Selected: {{ selectedExercise.name }}
+      </div>
+    </section>
+  </div>
+</template>
