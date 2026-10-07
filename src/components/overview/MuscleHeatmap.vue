@@ -177,10 +177,7 @@ watch(() => authStore.user?.$id, () => {
         <!-- Back View -->
         <div class="flex flex-col items-center">
           <span class="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Back View</span>
-          <svg viewBox="0 0 100 200" class="w-28 h-52 stroke-zinc-900 stroke-[0.5] transition-all">
-            <!-- Base Body Contour -->
-            <path d="M 35 20 Q 50 15 65 20 Q 75 35 80 50 L 82 85 Q 80 100 75 110 L 72 180 Q 68 190 60 190 L 52 190 L 50 110 L 48 190 L 40 190 Q 32 190 28 180 L 25 110 Q 20 100 18 85 L 20 50 Q 25 35 35 20 Z" fill="#18181b" />
-
+          <svg viewBox="0 0 100 200" class="w-28 h-52 stroke-zinc-900 stroke-[0.5] transition-all"></svg>
             <!-- Head -->
             <ellipse cx="50" cy="22" rx="10" ry="12" fill="#27272a" />
 
