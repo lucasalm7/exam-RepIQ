@@ -177,7 +177,7 @@ watch(() => authStore.user?.$id, () => {
         <!-- Back View -->
         <div class="flex flex-col items-center">
           <span class="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Back View</span>
-          <svg viewBox="0 0 100 200" class="w-28 h-52 stroke-zinc-900 stroke-[0.5] transition-all"></svg>
+          <svg viewBox="0 0 100 200" class="w-28 h-52 stroke-zinc-900 stroke-[0.5] transition-all">
             <!-- Head -->
             <ellipse cx="50" cy="22" rx="10" ry="12" fill="#27272a" />
 
