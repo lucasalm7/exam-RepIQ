@@ -3,22 +3,25 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { databases, DATABASE_ID, COLLECTIONS } from '@/lib/appwrite'
 import { Query } from 'appwrite'
 import { useAuthStore } from '@/stores/auth'
+import { useLogsStore } from '@/stores/logs'
 import { useCalendarExercises } from '@/composables/useCalendarSelectors'
 
 const authStore = useAuthStore()
+const logsStore = useLogsStore()
 const { allExercises, loadAllExercises } = useCalendarExercises()
 
 const isLoading = ref(false)
 const weeklyCategories = ref(new Set())
 
-// Get current 7-day week date strings (YYYY-MM-DD)
-const currentWeekDates = computed(() => {
-  const now = new Date()
-  const dayOfWeek = now.getDay()
+// Calculate the 7-day Monday–Sunday week based on logsStore.selectedDate
+const activeWeekDates = computed(() => {
+  const baseDate = logsStore.selectedDate ? new Date(logsStore.selectedDate) : new Date()
+  
+  const dayOfWeek = baseDate.getDay()
   const distanceToMon = dayOfWeek === 0 ? -6 : 1 - dayOfWeek
 
-  const monday = new Date(now)
-  monday.setDate(now.getDate() + distanceToMon)
+  const monday = new Date(baseDate)
+  monday.setDate(baseDate.getDate() + distanceToMon)
 
   const dates = []
   for (let i = 0; i < 7; i++) {
@@ -29,21 +32,18 @@ const currentWeekDates = computed(() => {
   return dates
 })
 
-// Fetch logged workouts for the current week and map categories
+// Fetch logged workouts for the focused week
 async function fetchWeeklyTargetedMuscles() {
   const userId = authStore.userProfile?.$id || authStore.user?.$id
   if (!userId) return
 
   isLoading.value = true
-  weeklyCategories.value.clear()
 
   try {
-    // 1. Ensure exercise library is populated for category lookup
     if (allExercises.value.length === 0) {
       await loadAllExercises()
     }
 
-    // Map exercise $id -> category for fast lookup
     const categoryMap = new Map()
     allExercises.value.forEach(ex => {
       if (ex.$id && ex.category) {
@@ -51,21 +51,19 @@ async function fetchWeeklyTargetedMuscles() {
       }
     })
 
-    // 2. Fetch calendar logs across the week
+    // Fetch logs across the entire active week calculated in activeWeekDates
     const response = await databases.listDocuments(
       DATABASE_ID,
       COLLECTIONS.CALENDAR,
       [
         Query.equal('userId', userId),
         Query.equal('type', 'exercise'),
-        Query.equal('date', currentWeekDates.value),
+        Query.equal('date', activeWeekDates.value),
       ]
     )
 
-    // 3. Collect active categories
     const activeSet = new Set()
     response.documents.forEach(doc => {
-      // Check direct lookup from loaded exercises library
       const category = categoryMap.get(doc.itemId)
       if (category) {
         activeSet.add(category)
@@ -82,7 +80,6 @@ async function fetchWeeklyTargetedMuscles() {
   }
 }
 
-// Helpers to check if a category is active this week
 const isChestActive = computed(() => weeklyCategories.value.has('chest'))
 const isBackActive = computed(() => weeklyCategories.value.has('back'))
 const isLegsActive = computed(() => weeklyCategories.value.has('legs'))
@@ -93,6 +90,23 @@ const isCoreActive = computed(() => weeklyCategories.value.has('core'))
 onMounted(() => {
   fetchWeeklyTargetedMuscles()
 })
+
+// Watch for date changes (switching days/weeks in WeeklyCalendar.vue)
+watch(
+  () => logsStore.selectedDate,
+  () => {
+    fetchWeeklyTargetedMuscles()
+  }
+)
+
+// Watch for additions/deletions in calendar items
+watch(
+  () => logsStore.dailyCalendarItems,
+  () => {
+    fetchWeeklyTargetedMuscles()
+  },
+  { deep: true }
+)
 
 // Re-fetch if auth state initializes
 watch(() => authStore.user?.$id, () => {
@@ -107,13 +121,6 @@ watch(() => authStore.user?.$id, () => {
         <h3 class="text-base font-bold text-white">Targeted Muscles</h3>
         <p class="text-xs text-zinc-400">Muscle groups hit during the active week</p>
       </div>
-      <button 
-        type="button" 
-        class="text-xs text-primary hover:underline"
-        @click="fetchWeeklyTargetedMuscles"
-      >
-        Refresh
-      </button>
     </div>
 
     <!-- Heatmap Body SVG Display -->

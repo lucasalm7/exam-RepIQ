@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useLogsStore } from '@/stores/logs'
 import CalendarExercises from './CalendarExercises.vue'
 import CalendarMeals from './CalendarMeals.vue'
@@ -7,16 +7,21 @@ import CalendarMeals from './CalendarMeals.vue'
 const logsStore = useLogsStore()
 
 const selectedDate = ref(new Date().toISOString().split('T')[0])
+const currentWeekOffset = ref(0)
 const showExerciseModal = ref(false)
 const showMealModal = ref(false)
 
 const weekDays = computed(() => {
   const now = new Date()
+  now.setDate(now.getDate() + currentWeekOffset.value * 7)
+
   const currentDay = now.getDay()
   const distanceToMon = currentDay === 0 ? -6 : 1 - currentDay
 
   const monday = new Date(now)
   monday.setDate(now.getDate() + distanceToMon)
+
+  const todayIso = new Date().toISOString().split('T')[0]
 
   return Array.from({ length: 7 }, (_, i) => {
     const day = new Date(monday)
@@ -26,18 +31,22 @@ const weekDays = computed(() => {
       dateString: isoDate,
       dayName: day.toLocaleDateString('en-US', { weekday: 'short' }),
       dayNumber: day.getDate(),
-      isToday: isoDate === new Date().toISOString().split('T')[0],
+      isToday: isoDate === todayIso,
     }
   })
 })
 
-const loggedExercises = computed(() =>
-  logsStore.dailyCalendarItems.filter(item => item.type === 'exercise')
-)
+function loadWeekOverview() {
+  const dates = weekDays.value.map(d => d.dateString)
+  logsStore.fetchWeeklyOverview(dates)
+}
 
-const loggedMeals = computed(() =>
-  logsStore.dailyCalendarItems.filter(item => item.type === 'meal')
-)
+function changeWeek(offsetDelta) {
+  currentWeekOffset.value = offsetDelta === 0 ? 0 : currentWeekOffset.value + offsetDelta
+  const newMonday = weekDays.value[0].dateString
+  selectDay(newMonday)
+  loadWeekOverview()
+}
 
 function selectDay(dateString) {
   selectedDate.value = dateString
@@ -61,26 +70,66 @@ async function handleDeleteItem(documentId) {
   await logsStore.removeFromCalendar(documentId)
 }
 
+const loggedExercises = computed(() =>
+  logsStore.dailyCalendarItems.filter(item => item.type === 'exercise')
+)
+
+const loggedMeals = computed(() =>
+  logsStore.dailyCalendarItems.filter(item => item.type === 'meal')
+)
+
 onMounted(() => {
   logsStore.fetchCalendarByDate(selectedDate.value)
+  loadWeekOverview()
+})
+
+watch(weekDays, () => {
+  loadWeekOverview()
 })
 </script>
 
 <template>
   <div class="space-y-6 rounded-2xl border border-surface-border bg-surface p-6">
-    <!-- Header -->
+    <!-- Header with Week Controls -->
     <div class="flex items-center justify-between">
-      <h2 class="text-lg font-bold text-white">Weekly Calendar</h2>
-      <span class="text-xs text-zinc-400">Selected: {{ selectedDate }}</span>
+      <div>
+        <h2 class="text-lg font-bold text-white">Weekly Calendar</h2>
+        <span class="text-xs text-zinc-400">Selected: {{ selectedDate }}</span>
+      </div>
+
+      <div class="flex items-center gap-1 rounded-xl border border-surface-border bg-background/60 p-1">
+        <button
+          type="button"
+          class="rounded-lg px-2.5 py-1 text-xs text-zinc-400 hover:bg-surface-hover hover:text-white transition"
+          @click="changeWeek(-1)"
+        >
+          ‹ Prev
+        </button>
+        <button
+          v-if="currentWeekOffset !== 0"
+          type="button"
+          class="rounded-lg px-2 py-1 text-xs font-semibold text-primary hover:bg-surface-hover transition"
+          @click="changeWeek(0)"
+        >
+          Today
+        </button>
+        <button
+          type="button"
+          class="rounded-lg px-2.5 py-1 text-xs text-zinc-400 hover:bg-surface-hover hover:text-white transition"
+          @click="changeWeek(1)"
+        >
+          Next ›
+        </button>
+      </div>
     </div>
 
-    <!-- Week Strip -->
+    <!-- Week Strip with Indicator Dots -->
     <div class="grid grid-cols-7 gap-2">
       <button
         v-for="day in weekDays"
         :key="day.dateString"
         type="button"
-        class="flex flex-col items-center rounded-xl border p-3 transition"
+        class="relative flex flex-col items-center rounded-xl border p-3 transition"
         :class="[
           selectedDate === day.dateString
             ? 'border-primary bg-primary/20 text-white'
@@ -91,6 +140,20 @@ onMounted(() => {
       >
         <span class="text-[10px] uppercase tracking-wider">{{ day.dayName }}</span>
         <span class="mt-1 text-base font-bold text-white">{{ day.dayNumber }}</span>
+
+        <!-- Indicator Dots -->
+        <div class="mt-1.5 flex h-1.5 items-center justify-center gap-1">
+          <span
+            v-if="logsStore.weeklyOverviewMap[day.dateString]?.hasExercise"
+            class="h-1.5 w-1.5 rounded-full bg-pink-500 shadow-sm shadow-pink-500"
+            title="Workout planned"
+          />
+          <span
+            v-if="logsStore.weeklyOverviewMap[day.dateString]?.hasMeal"
+            class="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500"
+            title="Meal planned"
+          />
+        </div>
       </button>
     </div>
 
@@ -169,7 +232,7 @@ onMounted(() => {
                 title="Delete entry"
                 @click="handleDeleteItem(item.$id)"
               >
-                x
+                ✕
               </button>
             </div>
           </li>

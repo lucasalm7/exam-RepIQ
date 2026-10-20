@@ -5,12 +5,15 @@ import { Query, ID } from 'appwrite'
 import { useAuthStore } from '@/stores/auth'
 
 export const useLogsStore = defineStore('logs', () => {
+  const selectedDate = ref(new Date().toISOString().split('T')[0])
   const dailyCalendarItems = ref([])
+  const weeklyOverviewMap = ref({}) // Format: { 'YYYY-MM-DD': { hasExercise: true, hasMeal: true } }
   const isLoading = ref(false)
   const error = ref('')
 
   // Fetch all calendar entries for a specific YYYY-MM-DD date
   async function fetchCalendarByDate(dateString) {
+    selectedDate.value = dateString
     const authStore = useAuthStore()
     const userId = authStore.userProfile?.$id || authStore.user?.$id
 
@@ -28,7 +31,6 @@ export const useLogsStore = defineStore('logs', () => {
         ]
       )
 
-      // Parse JSON details string back into objects
       dailyCalendarItems.value = response.documents.map(doc => ({
         ...doc,
         parsedDetails: doc.details ? JSON.parse(doc.details) : {},
@@ -38,6 +40,41 @@ export const useLogsStore = defineStore('logs', () => {
       error.value = err.message || 'Failed to load calendar'
     } finally {
       isLoading.value = false
+    }
+  }
+
+  // Fetch presence indicator flags for all days in the visible 7-day week
+  async function fetchWeeklyOverview(weekDates) {
+    const authStore = useAuthStore()
+    const userId = authStore.userProfile?.$id || authStore.user?.$id
+
+    if (!userId || !weekDates.length) return
+
+    try {
+      const response = await databases.listDocuments(
+        DATABASE_ID,
+        COLLECTIONS.CALENDAR,
+        [
+          Query.equal('userId', userId),
+          Query.equal('date', weekDates),
+        ]
+      )
+
+      const map = {}
+      weekDates.forEach(date => {
+        map[date] = { hasExercise: false, hasMeal: false }
+      })
+
+      response.documents.forEach(doc => {
+        if (map[doc.date]) {
+          if (doc.type === 'exercise') map[doc.date].hasExercise = true
+          if (doc.type === 'meal') map[doc.date].hasMeal = true
+        }
+      })
+
+      weeklyOverviewMap.value = map
+    } catch (err) {
+      console.error('Failed to fetch weekly overview:', err)
     }
   }
 
@@ -74,6 +111,14 @@ export const useLogsStore = defineStore('logs', () => {
       }
 
       dailyCalendarItems.value.push(parsedDoc)
+
+      // Update weekly overview flags dynamically
+      if (!weeklyOverviewMap.value[payload.date]) {
+        weeklyOverviewMap.value[payload.date] = { hasExercise: false, hasMeal: false }
+      }
+      if (payload.type === 'exercise') weeklyOverviewMap.value[payload.date].hasExercise = true
+      if (payload.type === 'meal') weeklyOverviewMap.value[payload.date].hasMeal = true
+
       return parsedDoc
     } catch (err) {
       console.error('Failed to add to calendar:', err)
@@ -86,31 +131,47 @@ export const useLogsStore = defineStore('logs', () => {
 
   // Remove item from calendar
   async function removeFromCalendar(documentId) {
-  isLoading.value = true
-  error.value = ''
-  try {
-    await databases.deleteDocument(
-      DATABASE_ID,
-      COLLECTIONS.CALENDAR,
-      documentId
-    )
-    // Filter out the deleted item from state
-    dailyCalendarItems.value = dailyCalendarItems.value.filter(
-      item => item.$id !== documentId
-    )
-  } catch (err) {
-    console.error('Failed to delete calendar item:', err)
-    error.value = err.message || 'Failed to delete item'
-  } finally {
-    isLoading.value = false
+    isLoading.value = true
+    error.value = ''
+    try {
+      const targetItem = dailyCalendarItems.value.find(item => item.$id === documentId)
+
+      await databases.deleteDocument(
+        DATABASE_ID,
+        COLLECTIONS.CALENDAR,
+        documentId
+      )
+
+      dailyCalendarItems.value = dailyCalendarItems.value.filter(
+        item => item.$id !== documentId
+      )
+
+      // Recalculate indicators for the affected date
+      if (targetItem) {
+        const remainingExercises = dailyCalendarItems.value.some(i => i.type === 'exercise')
+        const remainingMeals = dailyCalendarItems.value.some(i => i.type === 'meal')
+        
+        if (weeklyOverviewMap.value[targetItem.date]) {
+          weeklyOverviewMap.value[targetItem.date].hasExercise = remainingExercises
+          weeklyOverviewMap.value[targetItem.date].hasMeal = remainingMeals
+        }
+      }
+    } catch (err) {
+      console.error('Failed to delete calendar item:', err)
+      error.value = err.message || 'Failed to delete item'
+    } finally {
+      isLoading.value = false
+    }
   }
-}
 
   return {
+    selectedDate,
     dailyCalendarItems,
+    weeklyOverviewMap,
     isLoading,
     error,
     fetchCalendarByDate,
+    fetchWeeklyOverview,
     addToCalendar,
     removeFromCalendar,
   }
