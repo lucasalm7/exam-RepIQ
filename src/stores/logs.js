@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, computed } from 'vue' // Fixed: Added 'computed' import
 import { databases, DATABASE_ID, COLLECTIONS } from '@/lib/appwrite'
 import { Query, ID } from 'appwrite'
 import { useAuthStore } from '@/stores/auth'
@@ -10,6 +10,55 @@ export const useLogsStore = defineStore('logs', () => {
   const weeklyOverviewMap = ref({}) // Format: { 'YYYY-MM-DD': { hasExercise: true, hasMeal: true } }
   const isLoading = ref(false)
   const error = ref('')
+
+  // Filter only meal logs for the current selected date
+  const dailyMeals = computed(() =>
+    dailyCalendarItems.value.filter(item => item.type === 'meal')
+  )
+
+  // Helper function to safely extract numerical values from details or parsedDetails
+  function getMacroValue(item, key) {
+    if (item.parsedDetails && item.parsedDetails[key] !== undefined) {
+      return Number(item.parsedDetails[key]) || 0
+    }
+    if (item.details) {
+      try {
+        const parsed = typeof item.details === 'string' ? JSON.parse(item.details) : item.details
+        return Number(parsed[key]) || 0
+      } catch (e) {
+        return 0
+      }
+    }
+    return 0
+  }
+
+  // Total Calories (kcal)
+  const totalDailyCalories = computed(() =>
+    dailyMeals.value.reduce((sum, item) => sum + getMacroValue(item, 'calories'), 0)
+  )
+
+  // Total Protein (g)
+  const totalDailyProtein = computed(() =>
+    dailyMeals.value.reduce((sum, item) => sum + getMacroValue(item, 'protein'), 0)
+  )
+
+  // Total Carbs (g)
+  const totalDailyCarbs = computed(() =>
+    dailyMeals.value.reduce((sum, item) => sum + getMacroValue(item, 'carbs'), 0)
+  )
+
+  // Total Fats (g)
+  const totalDailyFats = computed(() =>
+    dailyMeals.value.reduce((sum, item) => sum + getMacroValue(item, 'fats'), 0)
+  )
+
+  // Combined Summary Object
+  const dailyMacroTotals = computed(() => ({
+    calories: totalDailyCalories.value,
+    protein: totalDailyProtein.value,
+    carbs: totalDailyCarbs.value,
+    fats: totalDailyFats.value,
+  }))
 
   // Fetch all calendar entries for a specific YYYY-MM-DD date
   async function fetchCalendarByDate(dateString) {
@@ -170,6 +219,12 @@ export const useLogsStore = defineStore('logs', () => {
     weeklyOverviewMap,
     isLoading,
     error,
+    dailyMeals,
+    totalDailyCalories,
+    totalDailyProtein,
+    totalDailyCarbs,
+    totalDailyFats,
+    dailyMacroTotals,
     fetchCalendarByDate,
     fetchWeeklyOverview,
     addToCalendar,

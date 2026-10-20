@@ -1,5 +1,6 @@
 <script setup>
 import WeeklyCalendar from '@/components/calendar/WeeklyCalendar.vue'
+import MacroRingChart from '@/components/overview/MacroRingChart.vue';
 import MuscleHeatmap from '@/components/overview/MuscleHeatmap.vue'
 </script>
 
@@ -12,6 +13,9 @@ import MuscleHeatmap from '@/components/overview/MuscleHeatmap.vue'
       </div>
       <div class="col-span-1">
         <MuscleHeatmap />
+      </div>
+      <div class="col-span-1">
+        <MacroRingChart />
       </div>
     </div>
   </div>

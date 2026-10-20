@@ -115,26 +115,26 @@ watch(() => authStore.user?.$id, () => {
 </script>
 
 <template>
-  <div class="rounded-2xl border border-surface-border bg-surface p-6">
-    <div class="flex items-center justify-between mb-4">
+  <div class="rounded-2xl border border-surface-border bg-surface p-4 sm:p-6 min-w-0">
+    <div class="flex items-center justify-between mb-2 sm:mb-4">
       <div>
-        <h3 class="text-base font-bold text-white">Targeted Muscles</h3>
-        <p class="text-xs text-zinc-400">Muscle groups hit during the active week</p>
+        <h3 class="text-sm sm:text-base font-bold text-white">Targeted Muscles</h3>
+        <p class="text-[11px] sm:text-xs text-zinc-400">Muscle groups hit during the active week</p>
       </div>
     </div>
 
     <!-- Heatmap Body SVG Display -->
-    <div class="relative flex justify-center items-center py-4 min-h-[220px]">
+    <div class="relative flex justify-center items-center py-2 sm:py-4 min-h-[180px]">
       <div v-if="isLoading" class="text-xs text-zinc-500">
         Loading muscle engagement...
       </div>
 
-      <div v-else class="flex gap-8 items-center justify-center">
+      <!-- Wrap SVGs vertically on very narrow views, side-by-side on wider cards -->
+      <div v-else class="flex flex-col sm:flex-row gap-4 sm:gap-6 items-center justify-center w-full">
         <!-- Front View -->
-        <div class="flex flex-col items-center">
-          <span class="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Front View</span>
-          <svg viewBox="0 0 100 200" class="w-28 h-52 stroke-zinc-900 stroke-[0.5] transition-all">
-          
+        <div class="flex flex-col items-center max-w-[100px] sm:max-w-[120px] w-full">
+          <span class="text-[9px] sm:text-[10px] uppercase tracking-wider text-zinc-500 mb-1.5">Front View</span>
+          <svg viewBox="0 0 100 200" class="w-full h-auto max-h-48 stroke-zinc-900 stroke-[0.5] transition-all">
             <!-- Head -->
             <ellipse cx="50" cy="22" rx="10" ry="12" fill="#27272a" />
 
@@ -182,9 +182,9 @@ watch(() => authStore.user?.$id, () => {
         </div>
 
         <!-- Back View -->
-        <div class="flex flex-col items-center">
-          <span class="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Back View</span>
-          <svg viewBox="0 0 100 200" class="w-28 h-52 stroke-zinc-900 stroke-[0.5] transition-all">
+        <div class="flex flex-col items-center max-w-[100px] sm:max-w-[120px] w-full">
+          <span class="text-[9px] sm:text-[10px] uppercase tracking-wider text-zinc-500 mb-1.5">Back View</span>
+          <svg viewBox="0 0 100 200" class="w-full h-auto max-h-48 stroke-zinc-900 stroke-[0.5] transition-all">
             <!-- Head -->
             <ellipse cx="50" cy="22" rx="10" ry="12" fill="#27272a" />
 
@@ -227,18 +227,18 @@ watch(() => authStore.user?.$id, () => {
       </div>
     </div>
 
-    <!-- Category Indicators Legend -->
-    <div class="mt-4 grid grid-cols-3 gap-2 border-t border-surface-border/50 pt-4">
+    <!-- Category Indicators Legend (Adjusts 2-col on narrow, 3-col on wider space) -->
+    <div class="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 border-t border-surface-border/50 pt-3">
       <div 
         v-for="cat in ['chest', 'back', 'legs', 'shoulders', 'arms', 'core']" 
         :key="cat"
-        class="flex items-center gap-2"
+        class="flex items-center gap-1.5 min-w-0"
       >
         <span 
-          class="h-2.5 w-2.5 rounded-full transition-colors"
+          class="h-2 w-2 shrink-0 rounded-full transition-colors"
           :class="weeklyCategories.has(cat) ? 'bg-primary shadow-sm shadow-primary' : 'bg-zinc-700'"
         />
-        <span class="text-xs capitalize text-zinc-300">{{ cat }}</span>
+        <span class="text-[11px] capitalize text-zinc-300 truncate">{{ cat }}</span>
       </div>
     </div>
   </div>
