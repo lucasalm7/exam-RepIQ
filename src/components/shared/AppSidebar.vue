@@ -53,22 +53,32 @@ async function handleLogout() {
           Meals & Diet
         </RouterLink>
 
-        <RouterLink to="/goals" class="nav-link" active-class="bg-primary-muted text-primary border border-primary/30">
-        <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 16 16">
-          <path d="M0 0h16v16H0z" fill="none" />
-          <path fill="#ff2e93" d="m13.637 2.363l1.676.335c.09.018.164.084.19.173a.25.25 0 0 1-.062.249l-1.373 1.374a.88.88 0 0 1-.619.256H12.31L9.45 7.611A1.5 1.5 0 1 1 6.5 8a1.5 1.5 0 0 1 1.889-1.449l2.861-2.862V2.552c0-.232.092-.455.256-.619L12.88.559a.25.25 0 0 1 .249-.062c.089.026.155.1.173.19Z" />
-          <path fill="#ff2e93" d="M2 8a6 6 0 1 0 11.769-1.656a.751.751 0 1 1 1.442-.413a7.502 7.502 0 0 1-12.513 7.371A7.501 7.501 0 0 1 10.069.789a.75.75 0 0 1-.413 1.442A6 6 0 0 0 2 8" />
-          <path fill="#ff2e93" d="M5 8a3.002 3.002 0 0 0 4.699 2.476a3 3 0 0 0 1.28-2.827a.748.748 0 0 1 1.045-.782a.75.75 0 0 1 .445.61A4.5 4.5 0 1 1 8.516 3.53a.75.75 0 1 1-.17 1.49A3 3 0 0 0 5 8" />
-        </svg>
-          Goals
+        <RouterLink to="/goals" class="nav-link flex items-center justify-between" active-class="bg-primary-muted text-primary border border-primary/30">
+        <div class="flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 16 16">
+            <path d="M0 0h16v16H0z" fill="none" />
+            <path fill="#ff2e93" d="m13.637 2.363l1.676.335c.09.018.164.084.19.173a.25.25 0 0 1-.062.249l-1.373 1.374a.88.88 0 0 1-.619.256H12.31L9.45 7.611A1.5 1.5 0 1 1 6.5 8a1.5 1.5 0 0 1 1.889-1.449l2.861-2.862V2.552c0-.232.092-.455.256-.619L12.88.559a.25.25 0 0 1 .249-.062c.089.026.155.1.173.19Z" />
+            <path fill="#ff2e93" d="M2 8a6 6 0 1 0 11.769-1.656a.751.751 0 1 1 1.442-.413a7.502 7.502 0 0 1-12.513 7.371A7.501 7.501 0 0 1 10.069.789a.75.75 0 0 1-.413 1.442A6 6 0 0 0 2 8" />
+            <path fill="#ff2e93" d="M5 8a3.002 3.002 0 0 0 4.699 2.476a3 3 0 0 0 1.28-2.827a.748.748 0 0 1 1.045-.782a.75.75 0 0 1 .445.61A4.5 4.5 0 1 1 8.516 3.53a.75.75 0 1 1-.17 1.49A3 3 0 0 0 5 8" />
+          </svg>
+        <span> Goals</span>
+        </div>
+        <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 font-semibold border border-amber-500/20">
+          Soon
+        </span>
         </RouterLink>
 
-        <RouterLink to="/friends" class="nav-link" active-class="bg-primary-muted text-primary border border-primary/30">
-        <svg xmlns="http://www.w3.org/2000/svg" width="1.25em" height="1em" viewBox="0 0 640 512">
-          <path d="M0 0h640v512H0z" fill="none" />
-          <path fill="#ff2e93" d="M192 256c61.9 0 112-50.1 112-112S253.9 32 192 32S80 82.1 80 144s50.1 112 112 112m76.8 32h-8.3c-20.8 10-43.9 16-68.5 16s-47.6-6-68.5-16h-8.3C51.6 288 0 339.6 0 403.2V432c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48v-28.8c0-63.6-51.6-115.2-115.2-115.2M480 256c53 0 96-43 96-96s-43-96-96-96s-96 43-96 96s43 96 96 96m48 32h-3.8c-13.9 4.8-28.6 8-44.2 8s-30.3-3.2-44.2-8H432c-20.4 0-39.2 5.9-55.7 15.4c24.4 26.3 39.7 61.2 39.7 99.8v38.4c0 2.2-.5 4.3-.6 6.4H592c26.5 0 48-21.5 48-48c0-61.9-50.1-112-112-112" />
-        </svg>
-          Friends
+        <RouterLink to="/friends" class="nav-link flex items-center justify-between" active-class="bg-primary-muted text-primary border border-primary/30">
+          <div class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="1.25em" height="1em" viewBox="0 0 640 512">
+              <path d="M0 0h640v512H0z" fill="none" />
+              <path fill="#ff2e93" d="M192 256c61.9 0 112-50.1 112-112S253.9 32 192 32S80 82.1 80 144s50.1 112 112 112m76.8 32h-8.3c-20.8 10-43.9 16-68.5 16s-47.6-6-68.5-16h-8.3C51.6 288 0 339.6 0 403.2V432c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48v-28.8c0-63.6-51.6-115.2-115.2-115.2M480 256c53 0 96-43 96-96s-43-96-96-96s-96 43-96 96s43 96 96 96m48 32h-3.8c-13.9 4.8-28.6 8-44.2 8s-30.3-3.2-44.2-8H432c-20.4 0-39.2 5.9-55.7 15.4c24.4 26.3 39.7 61.2 39.7 99.8v38.4c0 2.2-.5 4.3-.6 6.4H592c26.5 0 48-21.5 48-48c0-61.9-50.1-112-112-112" />
+            </svg>
+            <span>Friends</span>
+          </div>
+          <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 font-semibold border border-amber-500/20">
+            Soon
+          </span>
         </RouterLink>
 
         <!-- Admin Only Navigation Link -->
@@ -82,10 +92,10 @@ async function handleLogout() {
     <div class="pt-4 border-t border-surface-border flex items-center justify-between px-2">
       <RouterLink to="/profile" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
         <div class="w-8 h-8 rounded-full bg-surface-border flex items-center justify-center font-semibold text-xs text-white">
-          {{ authStore.userProfile?.username?.[0]?.toUpperCase() || 'U' }}
+          {{ authStore.user?.name?.[0] || 'U' }}
         </div>
         <span class="text-xs font-medium text-zinc-200 truncate max-w-[100px]">
-          {{ authStore.userProfile?.username }}
+          {{ authStore.user?.name || 'User'}}
         </span>
       </RouterLink>
 
