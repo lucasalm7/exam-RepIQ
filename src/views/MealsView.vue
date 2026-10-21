@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue'
 import PresetMealSelector from '@/components/meals/PresetMealSelector.vue'
 import MealFormModal from '@/components/meals/MealFormModal.vue'
+import LoadingSpinner from '@/components/shared/LoadingSpinner.vue'
 import { useMealsStore } from '@/stores/meals'
 
 const mealsStore = useMealsStore()
@@ -193,8 +194,8 @@ onMounted(() => {
           </button>
         </div>
 
-        <div v-if="mealsStore.isLoading" class="rounded-2xl border border-surface-border bg-surface/30 px-5 py-12 text-center text-sm text-zinc-500" >
-          Loading your meals...
+        <div v-if="mealsStore.isLoading" class="glass-panel rounded-2xl">
+          <LoadingSpinner text="Loading your meals..." />
         </div>
 
         <div v-else-if="mealsStore.userMeals.length === 0" class="rounded-2xl border border-dashed border-surface-border bg-surface/20 px-5 py-12 text-center" >

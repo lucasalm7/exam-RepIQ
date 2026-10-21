@@ -1,4 +1,6 @@
 <script setup>
+import LoadingSpinner from '@/components/shared/LoadingSpinner.vue'
+
 defineProps({
   exercises: {
     type: Array,
@@ -26,6 +28,12 @@ const emit = defineEmits(['edit', 'delete'])
         </thead>
 
         <tbody class="divide-y divide-surface-border">
+          <tr v-if="isLoading">
+            <td colspan="5" class="py-8">
+              <LoadingSpinner text="Loading exercises..." />
+            </td>
+          </tr>
+          
           <tr v-for="exercise in exercises" :key="exercise.$id" class="transition hover:bg-surface-hover/40">
             <td class="px-5 py-4 font-semibold text-white">
               {{ exercise.name }}

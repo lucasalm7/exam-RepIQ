@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue'
 import ExerciseSelector from '@/components/workouts/ExerciseSelector.vue'
 import ExerciseFormModal from '@/components/workouts/ExerciseFormModal.vue'
+import LoadingSpinner from '@/components/shared/LoadingSpinner.vue'
 import { useWorkoutsStore } from '@/stores/workouts'
 
 const workoutsStore = useWorkoutsStore()
@@ -197,8 +198,8 @@ onMounted(() => {
           </button>
         </div>
 
-        <div v-if="workoutsStore.isLoading && workoutsStore.userExercises.length === 0" class="rounded-2xl border border-surface-border bg-surface/30 px-5 py-12 text-center text-sm text-zinc-500" >
-          Loading your exercises...
+        <div v-if="workoutsStore.isLoading && workoutsStore.userExercises.length === 0" class="glass-panel rounded-2xl">
+          <LoadingSpinner text="Loading your exercises..." />
         </div>
 
         <div v-else-if="workoutsStore.userExercises.length === 0" class="rounded-2xl border border-dashed border-surface-border bg-surface/20 px-5 py-12 text-center" >

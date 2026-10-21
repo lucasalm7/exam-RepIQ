@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { useCalendarMeals } from '@/composables/useCalendarSelectors'
+import LoadingSpinner from '@/components/shared/LoadingSpinner.vue'
 
 const emit = defineEmits(['select', 'close'])
 
@@ -95,7 +96,9 @@ onMounted(loadAllMeals)
 
       <!-- Meal List -->
       <div class="mt-4 max-h-56 space-y-2 overflow-y-auto pr-1">
-        <p v-if="isLoading" class="py-4 text-center text-xs text-zinc-500">Loading meal library...</p>
+        <div v-if="isLoading" class="py-2">
+          <LoadingSpinner text="Loading meal library..." />
+        </div>        
         <p v-else-if="error" class="py-4 text-center text-xs text-red-400">{{ error }}</p>
         <p v-else-if="filteredMeals.length === 0" class="py-4 text-center text-xs text-zinc-500">No meals found.</p>
 

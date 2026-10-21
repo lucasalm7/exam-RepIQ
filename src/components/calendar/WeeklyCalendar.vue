@@ -3,6 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { useLogsStore } from '@/stores/logs'
 import CalendarExercises from './CalendarExercises.vue'
 import CalendarMeals from './CalendarMeals.vue'
+import LoadingSpinner from '@/components/shared/LoadingSpinner.vue'
 
 const logsStore = useLogsStore()
 
@@ -177,6 +178,9 @@ watch(weekDays, () => {
 
     <!-- Daily Log Feed -->
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div v-if="logsStore.isLoading" class="py-12 flex justify-center">
+        <LoadingSpinner text="Loading calendar schedule..." />
+      </div>
       <!-- Exercises -->
       <div class="rounded-xl border border-surface-border bg-background/30 p-4">
         <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-3">Logged Workouts</h3>

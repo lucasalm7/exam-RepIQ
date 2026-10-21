@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { useCalendarExercises } from '@/composables/useCalendarSelectors'
+import LoadingSpinner from '@/components/shared/LoadingSpinner.vue'
 
 const emit = defineEmits(['select', 'close'])
 
@@ -128,7 +129,9 @@ onMounted(loadAllExercises)
 
       <!-- Exercise List -->
       <div class="mt-4 max-h-48 space-y-2 overflow-y-auto pr-1">
-        <p v-if="isLoading" class="py-4 text-center text-xs text-zinc-500">Loading exercise library...</p>
+        <div v-if="isLoading" class="py-2">
+          <LoadingSpinner text="Loading exercise library..." />
+        </div>        
         <p v-else-if="error" class="py-4 text-center text-xs text-red-400">{{ error }}</p>
         <p v-else-if="filteredExercises.length === 0" class="py-4 text-center text-xs text-zinc-500">No exercises found.</p>
 

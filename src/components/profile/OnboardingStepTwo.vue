@@ -1,5 +1,6 @@
 <script setup>
 import { reactive, ref } from 'vue'
+import LoadingSpinner from '@/components/shared/LoadingSpinner.vue'
 
 const emit = defineEmits(['submit', 'back'])
 
@@ -126,8 +127,12 @@ function handleSubmit() {
         <button type="button" :disabled="isLoading" class="rounded-xl border border-surface-border px-4 py-3 text-sm font-semibold text-zinc-300 transition hover:bg-surface-hover hover:text-white disabled:cursor-not-allowed disabled:opacity-50" @click="emit('back')">
           Back
         </button>
-        <button type="submit" :disabled="isLoading" class="rounded-xl bg-primary px-5 py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 transition hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:cursor-not-allowed disabled:opacity-60">
-          {{ isLoading ? 'Creating account...' : 'Create account' }}
+        <button type="submit" :disabled="isLoading" class="flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 transition hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:cursor-not-allowed disabled:opacity-60">
+          <template v-if="isLoading">
+            <LoadingSpinner text="" class="py-0" />
+            <span>Creating account...</span>
+          </template>
+          <span v-else>Create account</span>
         </button>
       </div>
     </form>

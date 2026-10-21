@@ -1,7 +1,7 @@
-<!-- src/views/ProfileView.vue -->
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import LoadingSpinner from '@/components/shared/LoadingSpinner.vue'
 
 const authStore = useAuthStore()
 
@@ -244,9 +244,13 @@ async function handleSaveProfile() {
             <button
               type="submit"
               :disabled="isLoading"
-              class="w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-zinc-950 transition hover:bg-primary/90 disabled:opacity-50"
+              class="flex items-center justify-center gap-2 w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-zinc-950 transition hover:bg-primary/90 disabled:opacity-50"
             >
-              {{ isLoading ? 'Saving Changes...' : 'Save Profile' }}
+              <template v-if="isLoading">
+                <LoadingSpinner text="" class="py-0" />
+                <span>Saving Changes...</span>
+              </template>
+              <span v-else>Save Profile</span>
             </button>
 
             <!-- Alerts -->

@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import OnboardingStepOne from '@/components/profile/OnboardingStepOne.vue'
 import OnboardingStepTwo from '@/components/profile/OnboardingStepTwo.vue'
+import LoadingSpinner from '@/components/shared/LoadingSpinner.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -128,8 +129,12 @@ async function handleStepTwoSubmit(stepTwoData) {
               <label for="login-password" class="mb-2 block text-sm font-medium text-zinc-300">Password</label>
               <input id="login-password" v-model="loginPassword" type="password" autocomplete="current-password" required class="w-full rounded-xl border border-surface-border bg-background/60 px-4 py-3 text-sm text-white outline-none transition placeholder:text-zinc-600 focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="Enter your password" />
             </div>
-            <button type="submit" :disabled="authStore.isLoading" class="w-full rounded-xl bg-primary px-4 py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 transition hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:cursor-not-allowed disabled:opacity-60">
-              {{ authStore.isLoading ? 'Signing in...' : 'Sign in to RepIQ' }}
+            <button type="submit" :disabled="authStore.isLoading" class="flex items-center justify-center gap-2 w-full rounded-xl bg-primary px-4 py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 transition hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:cursor-not-allowed disabled:opacity-60">
+              <template v-if="authStore.isLoading">
+                <LoadingSpinner text="" class="py-0" />
+                <span>Signing in...</span>
+              </template>
+              <span v-else>Sign in to RepIQ</span>
             </button>
           </form>
         </section>

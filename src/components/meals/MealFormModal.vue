@@ -1,5 +1,6 @@
 <script setup>
 import { reactive, watch } from 'vue'
+import LoadingSpinner from '@/components/shared/LoadingSpinner.vue'
 
 const props = defineProps({
   editingMeal: {
@@ -180,8 +181,12 @@ function submit() {
           Cancel
         </button>
 
-        <button type="submit" :disabled="isLoading" class="rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-white transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60" >
-          {{ isLoading ? 'Saving...' : 'Save meal' }}
+        <button type="submit" :disabled="isLoading" class="flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-white transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60">
+          <template v-if="isLoading">
+            <LoadingSpinner text="" class="py-0" />
+            <span>Saving...</span>
+          </template>
+          <span v-else>Save meal</span>
         </button>
       </div>
     </form>

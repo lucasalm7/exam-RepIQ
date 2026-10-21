@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { fetchPublicExerciseLibrary } from '@/stores/library'
+import LoadingSpinner from '@/components/shared/LoadingSpinner.vue'
 
 const emit = defineEmits(['select'])
 
@@ -90,8 +91,9 @@ onMounted(loadExercises)
       {{ error }}
     </p>
 
-    <p v-else-if="isLoading" class="py-6 text-center text-sm text-zinc-500"> Loading exercises... </p>
-
+    <div v-else-if="isLoading" class="glass-panel rounded-2xl">
+      <LoadingSpinner text="Loading exercises..." />
+    </div>
     <p v-else-if="filteredExercises.length === 0" class="rounded-xl border border-surface-border bg-surface/30 px-4 py-8 text-center text-sm text-zinc-500" >
       No exercises found.
     </p>

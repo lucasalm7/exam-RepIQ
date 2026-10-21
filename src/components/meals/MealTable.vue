@@ -1,4 +1,6 @@
 <script setup>
+import LoadingSpinner from '@/components/shared/LoadingSpinner.vue'
+
 defineProps({
   meals: {
     type: Array,
@@ -28,6 +30,12 @@ const emit = defineEmits(['edit', 'delete'])
         </thead>
 
         <tbody class="divide-y divide-surface-border">
+          <tr v-if="isLoading">
+            <td colspan="7" class="py-8">
+              <LoadingSpinner text="Loading preset meals..." />
+            </td>
+          </tr>
+          <template v-else>
           <tr v-for="meal in meals" :key="meal.$id" class="transition hover:bg-surface-hover/40" >
             <td class="px-5 py-4 font-semibold text-white"> {{ meal.name }} </td>
             <td class="px-5 py-4 text-primary"> {{ meal.category }} </td>
@@ -46,12 +54,12 @@ const emit = defineEmits(['edit', 'delete'])
               </button>
             </td>
           </tr>
-
           <tr v-if="meals.length === 0">
             <td colspan="7" class="px-5 py-12 text-center text-zinc-500">
               No preset meals found.
             </td>
           </tr>
+          </template>
         </tbody>
       </table>
     </div>

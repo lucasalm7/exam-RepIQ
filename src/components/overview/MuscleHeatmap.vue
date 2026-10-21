@@ -5,6 +5,7 @@ import { Query } from 'appwrite'
 import { useAuthStore } from '@/stores/auth'
 import { useLogsStore } from '@/stores/logs'
 import { useCalendarExercises } from '@/composables/useCalendarSelectors'
+import LoadingSpinner from '@/components/shared/LoadingSpinner.vue'
 
 const authStore = useAuthStore()
 const logsStore = useLogsStore()
@@ -125,8 +126,8 @@ watch(() => authStore.user?.$id, () => {
 
     <!-- Heatmap Body SVG Display -->
     <div class="relative flex justify-center items-center py-2 sm:py-4 min-h-[180px]">
-      <div v-if="isLoading" class="text-xs text-zinc-500">
-        Loading muscle engagement...
+      <div v-if="isLoading" class="w-full flex items-center justify-center py-4">
+        <LoadingSpinner text="Loading muscle engagement..." />
       </div>
 
       <!-- Wrap SVGs vertically on very narrow views, side-by-side on wider cards -->
