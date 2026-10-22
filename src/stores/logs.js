@@ -4,9 +4,11 @@ import { databases, DATABASE_ID, COLLECTIONS } from '@/lib/appwrite'
 import { Query, ID } from 'appwrite'
 import { useAuthStore } from '@/stores/auth'
 
+// this const is a Pinia store for managing user logs, including daily and weekly calendar entries. 
+// It provides functions to fetch, add, and remove exercise and meal logs while maintaining loading and error states.
 export const useLogsStore = defineStore('logs', () => {
   const selectedDate = ref(new Date().toISOString().split('T')[0])
-  const dailyCalendarItems = ref([])
+  const dailyCalendarItems = ref([]) // Format: [{ $id, date, type, itemId, sourceType, itemName, details, completed }]
   const weeklyOverviewMap = ref({}) // Format: { 'YYYY-MM-DD': { hasExercise: true, hasMeal: true } }
   const isLoading = ref(false)
   const error = ref('')
@@ -49,7 +51,7 @@ export const useLogsStore = defineStore('logs', () => {
 
   // Total Fats (g)
   const totalDailyFats = computed(() =>
-    dailyMeals.value.reduce((sum, item) => sum + getMacroValue(item, 'fats'), 0)
+    dailyMeals.value.reduce((sum, item) => sum + getMacroValue(item, 'fats'), 0) // this function calculates the total fats consumed in a day by summing up the 'fats' values from all meal logs for the selected date.
   )
 
   // Combined Summary Object
@@ -62,15 +64,15 @@ export const useLogsStore = defineStore('logs', () => {
 
   // Fetch all calendar entries for a specific YYYY-MM-DD date
   async function fetchCalendarByDate(dateString) {
-    selectedDate.value = dateString
-    const authStore = useAuthStore()
-    const userId = authStore.userProfile?.$id || authStore.user?.$id
+    selectedDate.value = dateString // Update the selected date
+    const authStore = useAuthStore() // Get the current authenticated user's ID from the auth store
+    const userId = authStore.userProfile?.$id || authStore.user?.$id // Use the profile ID if available, otherwise fallback to account ID
 
     if (!userId) return
 
     isLoading.value = true
     error.value = ''
-    try {
+    try { // Fetch all calendar entries for the specified date and user
       const response = await databases.listDocuments(
         DATABASE_ID,
         COLLECTIONS.CALENDAR,
@@ -79,10 +81,10 @@ export const useLogsStore = defineStore('logs', () => {
           Query.equal('date', dateString),
         ]
       )
-
+      // Map the fetched documents to include parsed details for easier access.
       dailyCalendarItems.value = response.documents.map(doc => ({
         ...doc,
-        parsedDetails: doc.details ? JSON.parse(doc.details) : {},
+        parsedDetails: doc.details ? JSON.parse(doc.details) : {}, //details is stored as a JSON string in the database, so we parse it into an object for easier access in the UI.
       }))
     } catch (err) {
       console.error('Failed to fetch calendar entries:', err)
@@ -109,15 +111,15 @@ export const useLogsStore = defineStore('logs', () => {
         ]
       )
 
-      const map = {}
+      const map = {} // map is an object that will hold the presence indicators for each date in the week. Each date will have a corresponding object indicating whether there are exercise or meal logs for that day.
       weekDates.forEach(date => {
         map[date] = { hasExercise: false, hasMeal: false }
       })
 
       response.documents.forEach(doc => {
         if (map[doc.date]) {
-          if (doc.type === 'exercise') map[doc.date].hasExercise = true
-          if (doc.type === 'meal') map[doc.date].hasMeal = true
+          if (doc.type === 'exercise') map[doc.date].hasExercise = true // this function updates the weekly overview map to indicate whether there are exercise or meal logs for each date in the week. It checks the type of each document and sets the corresponding flags in the map.
+          if (doc.type === 'meal') map[doc.date].hasMeal = true // this function updates the weekly overview map to indicate whether there are exercise or meal logs for each date in the week. It checks the type of each document and sets the corresponding flags in the map.
         }
       })
 
@@ -195,14 +197,13 @@ export const useLogsStore = defineStore('logs', () => {
         item => item.$id !== documentId
       )
 
-      // Recalculate indicators for the affected date
-      if (targetItem) {
-        const remainingExercises = dailyCalendarItems.value.some(i => i.type === 'exercise')
-        const remainingMeals = dailyCalendarItems.value.some(i => i.type === 'meal')
-        
-        if (weeklyOverviewMap.value[targetItem.date]) {
-          weeklyOverviewMap.value[targetItem.date].hasExercise = remainingExercises
-          weeklyOverviewMap.value[targetItem.date].hasMeal = remainingMeals
+      // this if block checks if the removed item exists and if its date is present in the weekly overview map. If so, it checks if there are any remaining items of the same type (exercise or meal) for that date. It then updates the weekly overview flags accordingly to reflect whether there are still exercise or meal logs for that date after the deletion.
+      if (targetItem && weeklyOverviewMap.value[targetItem.date]) {
+        const remainingOfType = dailyCalendarItems.value.some(i => i.type === targetItem.type)
+        if (targetItem.type === 'exercise') {
+          weeklyOverviewMap.value[targetItem.date].hasExercise = remainingOfType
+        } else if (targetItem.type === 'meal') {
+          weeklyOverviewMap.value[targetItem.date].hasMeal = remainingOfType
         }
       }
     } catch (err) {
