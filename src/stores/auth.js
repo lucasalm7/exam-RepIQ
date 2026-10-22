@@ -58,14 +58,14 @@ const labels = computed(() =>
     isLoading.value = true
     error.value = null
     try {
-      // Create account in Appwrite Auth
-      const newAccount = await account.create('unique()', email, password, username)
+      // Create account in Appwrite Auth with name
+      await account.create('unique()', email, password, username)
       
       // Auto-login user upon creation
       await account.createEmailPasswordSession(email, password)
-      user.value = newAccount
-
-      return newAccount
+      
+      // Fetch complete user and profile state
+      await fetchCurrentUser()
     } catch (err) {
       error.value = err.message || 'Registration failed'
       throw err
