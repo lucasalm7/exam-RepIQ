@@ -1,18 +1,13 @@
-// src/lib/tdee.js
-
-/**
- * Calculate Mifflin-St Jeor BMR
- */
+// this function calculates the Basal Metabolic Rate (BMR) based on weight, height, age, and sex. 
+// It uses the Mifflin-St Jeor Equation to estimate the number of calories a person needs to maintain their current weight at rest.
 export function calculateBMR({ weightKg, heightCm, age = 25, sex = 'male' }) {
   if (!weightKg || !heightCm) return 2000 // Safe default fallback
 
   const base = 10 * weightKg + 6.25 * heightCm - 5 * age
-  return sex === 'female' ? base - 161 : base + 5
+  return sex === 'female' ? base - 161 : base + 5// The BMR is calculated differently for males and females, with a subtraction of 161 for females and an addition of 5 for males, reflecting physiological differences in energy expenditure.
 }
 
-/**
- * Calculates daily target calories & macros dynamically considering planned daily workouts.
- */
+// this function calculates the Total Daily Energy Expenditure (TDEE) and macronutrient targets based on user profile data, planned exercises, and fitness goals.
 export function calculateDailyTargets(userProfile, plannedExercises = [], userGoal = 'maintenance') {
   // Fallbacks if user profile attributes aren't fully set yet
   const weightKg = Number(userProfile?.weight) || 75
@@ -36,7 +31,7 @@ export function calculateDailyTargets(userProfile, plannedExercises = [], userGo
     }, 0)
   }
 
-  tdee += plannedWorkoutCalories
+  tdee += plannedWorkoutCalories// Add the planned workout calories to the TDEE
 
   // 4. Adjust total target based on primary fitness goal
   let targetCalories = tdee
