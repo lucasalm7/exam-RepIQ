@@ -8,30 +8,60 @@ import {
 } from '@/lib/appwrite'
 import { useAuthStore } from '@/stores/auth'
 
-const authStore = useAuthStore()
-
-function requireStaff() {
-  if (!authStore.canAccessAdmin) {
-    throw new Error('Staff access required')
-  }
-}
-
-function requireAdmin() {
-  if (!authStore.isAdmin) {
-    throw new Error('Admin access required')
-  }
-}
-
 export const useAdminStore = defineStore('admin', () => {
-
   const exerciseLibrary = ref([])
   const presetMealLibrary = ref([])
   const isLoading = ref(false)
   const error = ref(null)
 
-  // Sort Library
+  function getAuthStore() {
+    return useAuthStore()
+  }
+
+  function requireStaff() {
+    const authStore = getAuthStore()
+    if (!authStore.canAccessAdmin) {
+      throw new Error('Staff access required')
+    }
+  }
+
+  function requireAdmin() {
+    const authStore = getAuthStore()
+    if (!authStore.isAdmin) {
+      throw new Error('Admin access required')
+    }
+  }
+
   function sortLibrary(lib) {
     lib.sort((a, b) => a.name.localeCompare(b.name))
+  }
+
+  // Helper for pagination fetching to keep code DRY
+  async function fetchPaginatedDocuments(collectionId) {
+    const documents = []
+    let offset = 0
+    const limit = 100
+
+    while (true) {
+      const response = await databases.listDocuments(
+        DATABASE_ID,
+        collectionId,
+        [
+          Query.orderAsc('name'),
+          Query.limit(limit),
+          Query.offset(offset),
+        ]
+      )
+
+      documents.push(...response.documents)
+
+      if (documents.length >= response.total || response.documents.length === 0) {
+        break
+      }
+
+      offset += response.documents.length
+    }
+    return documents
   }
 
   // --- Exercise CRUD ---
@@ -41,30 +71,7 @@ export const useAdminStore = defineStore('admin', () => {
     error.value = null
 
     try {
-      const documents = []
-      let offset = 0
-      const limit = 100
-
-      while (true) {
-        const response = await databases.listDocuments(
-          DATABASE_ID,
-          COLLECTIONS.EXERCISES,
-          [
-            Query.orderAsc('name'),
-            Query.limit(limit),
-            Query.offset(offset),
-          ],
-        )
-
-        documents.push(...response.documents)
-
-        if (documents.length >= response.total || response.documents.length === 0) {
-          break
-        }
-
-        offset += response.documents.length
-      }
-
+      const documents = await fetchPaginatedDocuments(COLLECTIONS.EXERCISES)
       exerciseLibrary.value = documents
       return documents
     } catch (err) {
@@ -99,6 +106,28 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
 
+  async function updateGlobalExercise(id, payload) {
+    requireStaff()
+    isLoading.value = true
+    error.value = null
+    try {
+      const updated = await databases.updateDocument(
+        DATABASE_ID,
+        COLLECTIONS.EXERCISES,
+        id,
+        payload
+      )
+      const index = exerciseLibrary.value.findIndex((e) => e.$id === id)
+      if (index !== -1) exerciseLibrary.value[index] = updated
+      return updated
+    } catch (err) {
+      error.value = err.message || 'Failed to update exercise'
+      throw err
+    } finally {
+      isLoading.value = false
+    }
+  }
+
   async function deleteGlobalExercise(exerciseId) {
     requireAdmin()
     isLoading.value = true
@@ -127,30 +156,7 @@ export const useAdminStore = defineStore('admin', () => {
     error.value = null
 
     try {
-      const documents = []
-      let offset = 0
-      const limit = 100
-
-      while (true) {
-        const response = await databases.listDocuments(
-          DATABASE_ID,
-          COLLECTIONS.PRESET_MEALS,
-          [
-            Query.orderAsc('name'),
-            Query.limit(limit),
-            Query.offset(offset),
-          ],
-        )
-
-        documents.push(...response.documents)
-
-        if (documents.length >= response.total || response.documents.length === 0) {
-          break
-        }
-
-        offset += response.documents.length
-      }
-
+      const documents = await fetchPaginatedDocuments(COLLECTIONS.PRESET_MEALS)
       presetMealLibrary.value = documents
       return documents
     } catch (err) {
@@ -185,6 +191,28 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
 
+  async function updatePresetMeal(id, payload) {
+    requireStaff()
+    isLoading.value = true
+    error.value = null
+    try {
+      const updated = await databases.updateDocument(
+        DATABASE_ID,
+        COLLECTIONS.PRESET_MEALS,
+        id,
+        payload
+      )
+      const index = presetMealLibrary.value.findIndex((m) => m.$id === id)
+      if (index !== -1) presetMealLibrary.value[index] = updated
+      return updated
+    } catch (err) {
+      error.value = err.message || 'Failed to update preset meal'
+      throw err
+    } finally {
+      isLoading.value = false
+    }
+  }
+
   async function deletePresetMeal(mealId) {
     requireAdmin()
     isLoading.value = true
@@ -206,49 +234,6 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
 
-async function updateGlobalExercise(id, payload) {
-  requireStaff()
-  isLoading.value = true
-  error.value = null
-  try {
-    const updated = await databases.updateDocument(
-      DATABASE_ID,
-      COLLECTIONS.EXERCISES,
-      id,
-      payload
-    )
-    const index = exerciseLibrary.value.findIndex((e) => e.$id === id)
-    if (index !== -1) exerciseLibrary.value[index] = updated
-    return updated
-  } catch (err) {
-    error.value = err.message || 'Failed to update exercise'
-    throw err
-  } finally {
-    isLoading.value = false
-  }
-}
-
-async function updatePresetMeal(id, payload) {
-  requireStaff()
-  isLoading.value = true
-  error.value = null
-  try {
-    const updated = await databases.updateDocument(
-      DATABASE_ID,
-      COLLECTIONS.PRESET_MEALS,
-      id,
-      payload
-    )
-    const index = presetMealLibrary.value.findIndex((m) => m.$id === id)
-    if (index !== -1) presetMealLibrary.value[index] = updated
-    return updated
-  } catch (err) {
-    error.value = err.message || 'Failed to update preset meal'
-    throw err
-  } finally {
-    isLoading.value = false
-  }
-}
   return {
     exerciseLibrary,
     presetMealLibrary,
@@ -256,11 +241,11 @@ async function updatePresetMeal(id, payload) {
     error,
     fetchExerciseLibrary,
     addGlobalExercise,
+    updateGlobalExercise,
     deleteGlobalExercise,
     fetchPresetMealLibrary,
     addPresetMeal,
-    deletePresetMeal,
-    updateGlobalExercise,
     updatePresetMeal,
+    deletePresetMeal,
   }
 })
