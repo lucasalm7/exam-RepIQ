@@ -4,6 +4,7 @@ import { computed, ref } from 'vue'
 import { Query } from 'appwrite'
 import { account, databases, DATABASE_ID, COLLECTIONS } from '@/lib/appwrite'
 
+// this const is a Pinia store for managing authentication state and user profile data. It provides functions for user registration, login, logout, and profile creation while maintaining loading and error states.
 export const useAuthStore = defineStore('auth', () => {// Holds the authenticated Appwrite account details ($id, email, etc.)
   const user = ref(null)// Holds the physical profile document loaded from the 'profiles' collection
   const userProfile = ref(null)// Tracks whether initial auth check has completed on app startup
@@ -54,6 +55,7 @@ const labels = computed(() =>
   }
 
   // Account Registration
+  // Registers a new user with email, password, and username, then auto-logs in and fetches the user profile. Handles loading and error states.
   async function register(email, password, username) {
     isLoading.value = true
     error.value = null
@@ -75,6 +77,7 @@ const labels = computed(() =>
   }
 
   // Saving Onboarding Profile Data
+  // Creates a new profile document in the 'profiles' collection for the authenticated user. Handles loading and error states.
   async function createProfile(profileData) {
     isLoading.value = true
     error.value = null

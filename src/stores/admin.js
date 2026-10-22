@@ -8,6 +8,7 @@ import {
 } from '@/lib/appwrite'
 import { useAuthStore } from '@/stores/auth'
 
+// this const is a Pinia store for managing admin-related data and actions, including exercise and preset meal libraries. It provides functions to fetch, add, update, and delete documents in the Appwrite database while enforcing access control based on user roles (admin or staff).
 export const useAdminStore = defineStore('admin', () => {
   const exerciseLibrary = ref([])
   const presetMealLibrary = ref([])
@@ -36,11 +37,11 @@ export const useAdminStore = defineStore('admin', () => {
     lib.sort((a, b) => a.name.localeCompare(b.name))
   }
 
-  // Helper for pagination fetching to keep code DRY
+  // this function fetches all documents from a collection in a paginated manner
   async function fetchPaginatedDocuments(collectionId) {
     const documents = []
-    let offset = 0
-    const limit = 100
+    let offset = 0 // Start with an offset of 0
+    const limit = 100 // Number of documents to fetch per request because Appwrite has a limit on the number of documents returned in a single request
 
     while (true) {
       const response = await databases.listDocuments(
@@ -65,6 +66,7 @@ export const useAdminStore = defineStore('admin', () => {
   }
 
   // --- Exercise CRUD ---
+  // this function fetches all exercise documents from the EXERCISES collection in the Appwrite database. It requires staff access, sets loading and error states, and updates the local exerciseLibrary state with the fetched documents.
   async function fetchExerciseLibrary() {
     requireStaff()
     isLoading.value = true
@@ -82,6 +84,8 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
 
+  // this function adds a new exercise document to the EXERCISES collection in the Appwrite database. 
+  // It requires staff access, sets loading and error states, and updates the local exerciseLibrary state upon successful creation.
   async function addGlobalExercise(exerciseData) {
     requireStaff()
     isLoading.value = true
@@ -105,7 +109,7 @@ export const useAdminStore = defineStore('admin', () => {
       isLoading.value = false
     }
   }
-
+// this function updates an existing exercise document in the EXERCISES collection of the Appwrite database.
   async function updateGlobalExercise(id, payload) {
     requireStaff()
     isLoading.value = true
@@ -115,7 +119,7 @@ export const useAdminStore = defineStore('admin', () => {
         DATABASE_ID,
         COLLECTIONS.EXERCISES,
         id,
-        payload
+        payload// payload is an object containing the fields to be updated in the exercise document
       )
       const index = exerciseLibrary.value.findIndex((e) => e.$id === id)
       if (index !== -1) exerciseLibrary.value[index] = updated
@@ -128,6 +132,7 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
 
+  // this function deletes an exercise document from the EXERCISES collection in the Appwrite database.
   async function deleteGlobalExercise(exerciseId) {
     requireAdmin()
     isLoading.value = true
@@ -150,6 +155,7 @@ export const useAdminStore = defineStore('admin', () => {
   }
 
   // --- Preset Meal CRUD ---
+  // this function fetches all preset meal documents from the PRESET_MEALS collection in the Appwrite database. It requires staff access, sets loading and error states, and updates the local presetMealLibrary state with the fetched documents.
   async function fetchPresetMealLibrary() {
     requireStaff()
     isLoading.value = true
@@ -167,6 +173,7 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
 
+  // this function adds a new preset meal document to the PRESET_MEALS collection in the Appwrite database.
   async function addPresetMeal(mealData) {
     requireStaff()
     isLoading.value = true
@@ -191,6 +198,7 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
 
+  // this function updates an existing preset meal document in the PRESET_MEALS collection of the Appwrite database.
   async function updatePresetMeal(id, payload) {
     requireStaff()
     isLoading.value = true
@@ -213,6 +221,7 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
 
+  // this function deletes a preset meal document from the PRESET_MEALS collection in the Appwrite database.
   async function deletePresetMeal(mealId) {
     requireAdmin()
     isLoading.value = true

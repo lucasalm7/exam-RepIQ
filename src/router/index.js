@@ -57,12 +57,15 @@ const routes = [
   }
 ]
 
+// Create the router instance with history mode and the defined routes
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes
 })
 
 // Navigation Guards
+// This navigation guard checks the user's authentication and authorization status before allowing access to certain routes. 
+// It ensures that users are redirected appropriately based on their login state and role (guest, authenticated user, or staff/admin).
 router.beforeEach(async (to) => {
   const authStore = useAuthStore()
 

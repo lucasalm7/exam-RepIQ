@@ -1,17 +1,21 @@
 import { Client, Account, Databases, Storage } from 'appwrite';
 
 const client = new Client();
+// Set the Appwrite endpoint and project ID from environment variables
 
 client
   .setEndpoint(import.meta.env.VITE_APPWRITE_ENDPOINT) 
   .setProject(import.meta.env.VITE_APPWRITE_PROJECT_ID);
 
+// this file initializes the Appwrite client and exports instances of Account, Databases, and Storage services for use in other parts of the application. It also defines constants for the database ID and collection names based on environment variables.
 export const account = new Account(client);
 export const databases = new Databases(client);
 export const storage = new Storage(client);
 
+// Define constants for the Appwrite database ID and collection names using environment variables
 export const DATABASE_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID;
 
+// Define constants for the Appwrite collection names using environment variables
 export const COLLECTIONS = {
   PROFILES: import.meta.env.VITE_APPWRITE_COLLECTION_PROFILES,     
   EXERCISES: import.meta.env.VITE_APPWRITE_COLLECTION_EXERCISES,            
