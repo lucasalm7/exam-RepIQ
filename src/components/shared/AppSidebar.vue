@@ -5,10 +5,11 @@ import { useAuthStore } from '@/stores/auth'
 const authStore = useAuthStore()
 const router = useRouter()
 
+// Function to handle user logout
 async function handleLogout() {
   try {
-    await authStore.logout()
-    await router.push({ name: 'auth' })
+    await authStore.logout()// Calls the logout method from the auth store, which is responsible for clearing the user's authentication state and any related session data.
+    await router.push({ name: 'auth' })// After logging out, the user is redirected to the 'auth' route, which is typically the login or authentication page of the application.
   } catch {
   }
 }
@@ -17,7 +18,7 @@ async function handleLogout() {
 <template>
   <aside class="sticky top-0 hidden h-screen w-64 shrink-0 flex-col justify-between overflow-hidden border-r border-surface-border p-4 glass-panel md:flex">    
     <div class="space-y-6">
-      <!-- App Brand Logo -->
+      <!-- Logo and app name section -->
       <div class="flex items-center gap-2 px-2">
         <div class="w-8 h-8 rounded-xl bg-primary flex items-center justify-center font-bold text-white shadow-lg shadow-primary/30">
           R
@@ -25,7 +26,7 @@ async function handleLogout() {
         <span class="text-lg font-bold tracking-tight text-white">RepIQ</span>
       </div>
 
-      <!-- Navigation Links -->
+      <!-- Navigation links section -->
       <nav class="space-y-1">
         <RouterLink to="/" class="nav-link" active-class="bg-primary-muted text-primary border border-primary/30">
           <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24">
@@ -49,7 +50,6 @@ async function handleLogout() {
           <path fill="#ff2e93" d="M439 166.29c-18.67-32.57-47.46-50.81-85.57-54.23c-20.18-1.8-39 3.37-57.23 8.38c-14.15 3.89-27.52 7.56-40.2 7.56s-26-3.68-40.06-7.57c-18.28-5-37.18-10.26-57.43-8.36c-36.39 3.41-65.51 22.11-84.31 54.08C56.82 195.76 48 236.76 48 288c0 40.4 15 90.49 40 134c12.82 22.25 47 74 87.16 74c30.77 0 47.15-9.44 59.11-16.33c8.3-4.78 13.31-7.67 21.69-7.67s13.39 2.89 21.69 7.67c12 6.89 28.35 16.33 59.15 16.33c40.17 0 74.34-51.76 87.16-74c25.07-43.5 40-93.59 40-134c.04-52.57-8.14-92.38-24.96-121.71M216 352c-13.25 0-24-21.49-24-48s10.75-48 24-48s24 21.49 24 48s-10.75 48-24 48m80 0c-13.25 0-24-21.49-24-48s10.75-48 24-48s24 21.49 24 48s-10.75 48-24 48" />
           <path fill="#ff2e93" d="M265.1 111.93c13.16-1.75 37.86-7.83 58.83-28.79a98 98 0 0 0 28-58.2a8 8 0 0 0-8.55-8.94c-12.71.95-36.76 5.87-58.73 27.85A97.6 97.6 0 0 0 256 103.2a8 8 0 0 0 9.1 8.73" />
         </svg>
-
           Meals & Diet
         </RouterLink>
 
@@ -81,24 +81,24 @@ async function handleLogout() {
           </span>
         </RouterLink>
 
-        <!-- Admin Only Navigation Link -->
+        <!-- Conditionally render the Admin Panel link if the user has admin access -->
         <RouterLink v-if="authStore.canAccessAdmin" to="/admin" class="nav-link" active-class="bg-accent/15 text-accent border border-accent/30">
           Admin Panel
         </RouterLink>
       </nav>
     </div>
 
-    <!-- User Profile & Logout Section -->
+    <!-- User profile and logout section -->
     <div class="pt-4 border-t border-surface-border flex items-center justify-between px-2">
       <RouterLink to="/profile" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
         <div class="w-8 h-8 rounded-full bg-surface-border flex items-center justify-center font-semibold text-xs text-white">
-          {{ authStore.user?.name?.[0] || 'U' }}
+          {{ authStore.user?.name?.[0] || 'U' }}<!-- Display the first letter of the user's name from the auth store, defaulting to 'U' if not available -->
         </div>
         <span class="text-xs font-medium text-zinc-200 truncate max-w-[100px]">
-          {{ authStore.user?.name || 'User'}}
+          {{ authStore.user?.name || 'User'}}<!-- Display the user's name from the auth store, defaulting to 'User' if not available -->
         </span>
       </RouterLink>
-
+      <!-- Logout button that triggers the handleLogout function when clicked -->
       <button type="button" @click="handleLogout" class="text-xs text-zinc-400 hover:text-primary transition-colors cursor-pointer">
           Log out
         </button>
@@ -106,7 +106,7 @@ async function handleLogout() {
 
   </aside>
 </template>
-
+<!-- Scoped styles for the AppSidebar component -->
 <style scoped>
 .nav-link {
   display: flex;

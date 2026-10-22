@@ -17,7 +17,7 @@ const pageTitle = computed(() => {
   <header class="flex justify-between items-center px-6 py-4 border-b border-surface-border bg-background/50 backdrop-blur-md sticky top-0 z-10">
     <div>
       <h1 class="text-xl font-semibold tracking-tight text-white"> {{ pageTitle }} </h1>
-      // Display the username from the auth store, defaulting to 'Athlete' if not available
+      <!-- Display the username from the auth store, defaulting to 'Athlete' if not available -->
       <p class="text-xs text-zinc-400 mt-0.5"> Welcome back, <span class="text-zinc-200 font-medium">{{ authStore.userProfile?.username || 'Athlete' }}</span> </p>
     </div>
 
