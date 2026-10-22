@@ -2,25 +2,33 @@
 import { ID, Permission, Query, Role } from 'appwrite'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { account, databases, DATABASE_ID, COLLECTIONS } from '@/lib/appwrite'
+import { databases, DATABASE_ID, COLLECTIONS } from '@/lib/appwrite'
+import { useAuthStore } from '@/stores/auth'
 
-export const useWorkoutsStore = defineStore('user_exercises', () => {
+export const useWorkoutsStore = defineStore('workouts', () => {
   const userExercises = ref([])
   const isLoading = ref(false)
   const error = ref(null)
+
+  // Helper to resolve active user ID from auth store
+  function getUserId() {
+    const authStore = useAuthStore()
+    return authStore.userProfile?.$id || authStore.user?.$id
+  }
 
   async function fetchUserExercises() {
     isLoading.value = true
     error.value = null
 
     try {
-      const user = await account.get()
+      const userId = getUserId()
+      if (!userId) throw new Error('User not authenticated')
 
       const response = await databases.listDocuments(
         DATABASE_ID,
-        COLLECTIONS.user_exercises,
+        COLLECTIONS.USER_EXERCISES,
         [
-          Query.equal('userId', user.$id),
+          Query.equal('userId', userId),
           Query.orderAsc('name'),
         ],
       )
@@ -40,20 +48,21 @@ export const useWorkoutsStore = defineStore('user_exercises', () => {
     error.value = null
 
     try {
-      const user = await account.get()
+      const userId = getUserId()
+      if (!userId) throw new Error('User not authenticated')
 
       const exercise = await databases.createDocument(
         DATABASE_ID,
-        COLLECTIONS.user_exercises,
+        COLLECTIONS.USER_EXERCISES,
         ID.unique(),
         {
           ...exerciseData,
-          userId: user.$id,
+          userId,
         },
         [
-          Permission.read(Role.user(user.$id)),
-          Permission.update(Role.user(user.$id)),
-          Permission.delete(Role.user(user.$id)),
+          Permission.read(Role.user(userId)),
+          Permission.update(Role.user(userId)),
+          Permission.delete(Role.user(userId)),
         ],
       )
 
@@ -74,7 +83,7 @@ export const useWorkoutsStore = defineStore('user_exercises', () => {
     try {
       const exercise = await databases.updateDocument(
         DATABASE_ID,
-        COLLECTIONS.user_exercises,
+        COLLECTIONS.USER_EXERCISES,
         exerciseId,
         exerciseData,
       )
@@ -103,7 +112,7 @@ export const useWorkoutsStore = defineStore('user_exercises', () => {
     try {
       await databases.deleteDocument(
         DATABASE_ID,
-        COLLECTIONS.user_exercises,
+        COLLECTIONS.USER_EXERCISES,
         exerciseId,
       )
 
