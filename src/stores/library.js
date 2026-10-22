@@ -6,7 +6,9 @@ import {
   COLLECTIONS,
 } from '@/lib/appwrite'
 
-export async function fetchPublicExerciseLibrary() {
+// this function fetches documents from a specified collection in a paginated manner, handling the offset and limit for each request. 
+// It returns an array of all documents in the collection.
+async function fetchPaginatedLibrary(collectionId) {
   const documents = []
   let offset = 0
   const limit = 100
@@ -14,7 +16,7 @@ export async function fetchPublicExerciseLibrary() {
   while (true) {
     const response = await databases.listDocuments(
       DATABASE_ID,
-      COLLECTIONS.EXERCISES,
+      collectionId,
       [
         Query.orderAsc('name'),
         Query.limit(limit),
@@ -36,34 +38,11 @@ export async function fetchPublicExerciseLibrary() {
 
   return documents
 }
-
+// this function fetches all exercise documents from the EXERCISES collection in the Appwrite database.
+export async function fetchPublicExerciseLibrary() {
+  return await fetchPaginatedLibrary(COLLECTIONS.EXERCISES)
+}
+// this function fetches all preset meal documents from the PRESET_MEALS collection in the Appwrite database.
 export async function fetchPublicPresetMeals() {
-  const documents = []
-  let offset = 0
-  const limit = 100
-
-  while (true) {
-    const response = await databases.listDocuments(
-      DATABASE_ID,
-      COLLECTIONS.PRESET_MEALS,
-      [
-        Query.orderAsc('name'),
-        Query.limit(limit),
-        Query.offset(offset),
-      ],
-    )
-
-    documents.push(...response.documents)
-
-    if (
-      documents.length >= response.total ||
-      response.documents.length === 0
-    ) {
-      break
-    }
-
-    offset += response.documents.length
-  }
-
-  return documents
+  return await fetchPaginatedLibrary(COLLECTIONS.PRESET_MEALS)
 }
