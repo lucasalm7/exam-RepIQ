@@ -1,32 +1,26 @@
+// Composable functions to aggregate public/preset library items and user-specific entries for calendar selection
 import { ref } from 'vue'
 import { fetchPublicExerciseLibrary, fetchPublicPresetMeals } from '@/stores/library'
 import { useWorkoutsStore } from '@/stores/workouts'
 import { useMealsStore } from '@/stores/meals'
 
-export function useCalendarExercises() {
-  const allExercises = ref([])
+export function useCalendarExercises() {// Composable function to manage the loading and state of exercises for calendar selection
+  const allExercises = ref([])// Reactive reference to hold the combined list of exercises from both public and user-specific sources
   const isLoading = ref(false)
   const error = ref('')
 
-  async function loadAllExercises() {
+  async function loadAllExercises() {// Function to load all exercises, combining public and user-specific entries
     isLoading.value = true
     error.value = ''
     try {
-      const workoutsStore = useWorkoutsStore()
+      const workoutsStore = useWorkoutsStore()// Access the workouts store to fetch user-specific exercises
 
-      // 1. Fetch public exercises
-      const globals = await fetchPublicExerciseLibrary().catch(() => [])
+      const [globals, personals] = await Promise.all([// Fetch public exercises and user-specific exercises in parallel
+        fetchPublicExerciseLibrary().catch(() => []),
+        workoutsStore.fetchUserExercises().catch(() => [])//where is fetchUserExercises defined? It is defined in the workouts store, which is imported at the top of this file. It fetches exercises specific to the authenticated user.
+      ])
 
-      // 2. Fetch personal exercises safely
-      if (typeof workoutsStore.fetchPersonalExercises === 'function') {
-        await workoutsStore.fetchPersonalExercises()
-      } else if (typeof workoutsStore.fetchUserExercises === 'function') {
-        await workoutsStore.fetchUserExercises()
-      }
-
-      // Check where user exercises are held in your store
-      const personals = workoutsStore.personalExercises || workoutsStore.userExercises || workoutsStore.workouts || []
-
+      // Tag items with their origin source type for UI handling
       const taggedGlobals = (globals || []).map(item => ({ ...item, sourceType: 'global' }))
       const taggedPersonals = (personals || []).map(item => ({ ...item, sourceType: 'personal' }))
 
@@ -53,19 +47,13 @@ export function useCalendarMeals() {
     try {
       const mealsStore = useMealsStore()
 
-      // 1. Fetch public preset meals
-      const presets = await fetchPublicPresetMeals().catch(() => [])
+      // 1. Fetch public preset meals and user-created meals in parallel
+      const [presets, personals] = await Promise.all([
+        fetchPublicPresetMeals().catch(() => []),
+        mealsStore.fetchUserMeals().catch(() => [])
+      ])
 
-      // 2. Fetch personal meals safely
-      if (typeof mealsStore.fetchPersonalMeals === 'function') {
-        await mealsStore.fetchPersonalMeals()
-      } else if (typeof mealsStore.fetchUserMeals === 'function') {
-        await mealsStore.fetchUserMeals()
-      }
-
-      // Check where user meals are held in your store
-      const personals = mealsStore.personalMeals || mealsStore.userMeals || mealsStore.meals || []
-
+      // Tag items with their origin source type
       const taggedPresets = (presets || []).map(item => ({ ...item, sourceType: 'preset' }))
       const taggedPersonals = (personals || []).map(item => ({ ...item, sourceType: 'personal' }))
 
