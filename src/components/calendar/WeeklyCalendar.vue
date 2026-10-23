@@ -4,6 +4,7 @@ import { useLogsStore } from '@/stores/logs'
 import CalendarExercises from './CalendarExercises.vue'
 import CalendarMeals from './CalendarMeals.vue'
 import LoadingSpinner from '@/components/shared/LoadingSpinner.vue'
+import CalendarLogList from './CalendarLogList.vue'
 
 const logsStore = useLogsStore()
 
@@ -178,70 +179,27 @@ watch(weekDays, () => {
 
     <!-- Daily Log Feed -->
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-      <div v-if="logsStore.isLoading" class="py-12 flex justify-center">
+      <div v-if="logsStore.isLoading" class="py-12 flex justify-center col-span-2">
         <LoadingSpinner text="Loading calendar schedule..." />
       </div>
-      <!-- Exercises -->
-      <div class="rounded-xl border border-surface-border bg-background/30 p-4">
-        <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-3">Logged Workouts</h3>
-        <p v-if="loggedExercises.length === 0" class="text-xs text-zinc-500">No exercises logged for this day.</p>
-        <ul v-else class="space-y-2">
-          <li
-            v-for="item in loggedExercises"
-            :key="item.$id"
-            class="flex items-center justify-between rounded-lg bg-surface/50 p-2.5 text-xs text-zinc-200"
-          >
-            <div>
-              <span class="font-medium text-white">{{ item.itemName }}</span>
-              <span class="ml-2 rounded bg-surface-border/40 px-1.5 py-0.5 text-[10px] text-zinc-400">{{ item.sourceType }}</span>
-            </div>
-            <div class="flex items-center gap-3">
-              <span class="text-zinc-400">
-                {{ item.parsedDetails.sets }}x{{ item.parsedDetails.reps }} @ {{ item.parsedDetails.weight }}kg
-              </span>
-              <button
-                type="button"
-                class="text-zinc-500 hover:text-red-400 transition"
-                title="Delete entry"
-                @click="handleDeleteItem(item.$id)"
-              >
-                ✕
-              </button>
-            </div>
-          </li>
-        </ul>
-      </div>
 
-      <!-- Meals -->
-      <div class="rounded-xl border border-surface-border bg-background/30 p-4">
-        <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-3">Logged Meals</h3>
-        <p v-if="loggedMeals.length === 0" class="text-xs text-zinc-500">No meals logged for this day.</p>
-        <ul v-else class="space-y-2">
-          <li
-            v-for="item in loggedMeals"
-            :key="item.$id"
-            class="flex items-center justify-between rounded-lg bg-surface/50 p-2.5 text-xs text-zinc-200"
-          >
-            <div>
-              <span class="font-medium text-white">{{ item.itemName }}</span>
-              <span class="ml-2 rounded bg-surface-border/40 px-1.5 py-0.5 text-[10px] text-zinc-400">{{ item.sourceType }}</span>
-            </div>
-            <div class="flex items-center gap-3">
-              <span class="text-zinc-400">
-                {{ item.parsedDetails.calories }} kcal
-              </span>
-              <button
-                type="button"
-                class="text-zinc-500 hover:text-red-400 transition"
-                title="Delete entry"
-                @click="handleDeleteItem(item.$id)"
-              >
-                ✕
-              </button>
-            </div>
-          </li>
-        </ul>
-      </div>
+      <!-- Logged Workouts Feed -->
+      <CalendarLogList
+        title="Logged Workouts"
+        :items="loggedExercises"
+        empty-message="No exercises logged for this day."
+        type="exercise"
+        @delete="handleDeleteItem"
+      />
+
+      <!-- Logged Meals Feed -->
+      <CalendarLogList
+        title="Logged Meals"
+        :items="loggedMeals"
+        empty-message="No meals logged for this day."
+        type="meal"
+        @delete="handleDeleteItem"
+      />
     </div>
 
     <!-- Modals -->
