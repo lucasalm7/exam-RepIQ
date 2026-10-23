@@ -3,21 +3,22 @@ import { computed, onMounted, ref } from 'vue'
 import { useCalendarExercises } from '@/composables/useCalendarSelectors'
 import LoadingSpinner from '@/components/shared/LoadingSpinner.vue'
 
-const emit = defineEmits(['select', 'close'])
+const emit = defineEmits(['select', 'close']) // define the events that this component can emit: 'select' when an exercise is selected and 'close' when the modal is closed
 
 const { allExercises, isLoading, error, loadAllExercises } = useCalendarExercises()
 
-const search = ref('')
+const search = ref('') // the search query entered by the user
 const selectedTab = ref('all') // 'all' | 'global' | 'personal'
-const selectedCategory = ref('all')
-const selectedExercise = ref(null)
+const selectedCategory = ref('all') // 'all' | 'chest' | 'back' | 'legs' | 'shoulders' | 'arms' | 'core' | 'cardio'
+const selectedExercise = ref(null) // the currently selected exercise from the list
 
-// Logging Details Form State
+// sets, reps, and weight for the selected exercise,
+// the ref values are initialized to default values (3 sets, 10 reps, 0 kg weight)
 const sets = ref(3)
 const reps = ref(10)
 const weight = ref(0)
 
-const categories = [
+const categories = [ // the list of exercise categories for filtering
   { value: 'all', label: 'All categories' },
   { value: 'chest', label: 'Chest' },
   { value: 'back', label: 'Back' },
@@ -27,7 +28,7 @@ const categories = [
   { value: 'core', label: 'Core' },
   { value: 'cardio', label: 'Cardio' },
 ]
-
+// computed property that filters the list of exercises based on the selected tab, category, and search query
 const filteredExercises = computed(() => {
   const query = search.value.trim().toLowerCase()
 
@@ -51,11 +52,11 @@ const filteredExercises = computed(() => {
     return matchesSource && matchesCategory && searchableText.includes(query)
   })
 })
-
+// function to set the selected exercise when a user clicks on an exercise from the list
 function pickExercise(exercise) {
   selectedExercise.value = exercise
 }
-
+// function to handle the confirmation of adding the selected exercise to the calendar
 function handleConfirm() {
   if (!selectedExercise.value) return
 
@@ -85,44 +86,29 @@ onMounted(loadAllExercises)
 
       <!-- Source Filter Tabs -->
       <div class="mt-4 flex rounded-xl border border-surface-border bg-background/60 p-1">
-        <button
-          type="button"
-          class="flex-1 rounded-lg py-1.5 text-xs font-semibold transition"
+        <button type="button" class="flex-1 rounded-lg py-1.5 text-xs font-semibold transition"
           :class="selectedTab === 'all' ? 'bg-primary text-white' : 'text-zinc-400 hover:text-white'"
-          @click="selectedTab = 'all'"
-        >
+          @click="selectedTab = 'all'">
           All
         </button>
-        <button
-          type="button"
-          class="flex-1 rounded-lg py-1.5 text-xs font-semibold transition"
+        <button type="button" class="flex-1 rounded-lg py-1.5 text-xs font-semibold transition"
           :class="selectedTab === 'global' ? 'bg-primary text-white' : 'text-zinc-400 hover:text-white'"
-          @click="selectedTab = 'global'"
-        >
+          @click="selectedTab = 'global'">
           System Library
         </button>
-        <button
-          type="button"
-          class="flex-1 rounded-lg py-1.5 text-xs font-semibold transition"
+        <button type="button" class="flex-1 rounded-lg py-1.5 text-xs font-semibold transition"
           :class="selectedTab === 'personal' ? 'bg-primary text-white' : 'text-zinc-400 hover:text-white'"
-          @click="selectedTab = 'personal'"
-        >
+          @click="selectedTab = 'personal'">
           My Exercises
         </button>
       </div>
 
       <!-- Search & Category Inputs -->
       <div class="mt-4 grid grid-cols-2 gap-3">
-        <input
-          v-model="search"
-          type="search"
-          placeholder="Search exercises..."
-          class="w-full rounded-xl border border-surface-border bg-background/60 px-3 py-2 text-sm text-white outline-none focus:border-primary"
-        />
-        <select
-          v-model="selectedCategory"
-          class="w-full rounded-xl border border-surface-border bg-background/60 px-3 py-2 text-sm text-zinc-300 outline-none focus:border-primary"
-        >
+        <input v-model="search" type="search" placeholder="Search exercises..."
+          class="w-full rounded-xl border border-surface-border bg-background/60 px-3 py-2 text-sm text-white outline-none focus:border-primary"/>
+        <select v-model="selectedCategory"
+          class="w-full rounded-xl border border-surface-border bg-background/60 px-3 py-2 text-sm text-zinc-300 outline-none focus:border-primary">
           <option v-for="cat in categories" :key="cat.value" :value="cat.value">{{ cat.label }}</option>
         </select>
       </div>
@@ -135,14 +121,10 @@ onMounted(loadAllExercises)
         <p v-else-if="error" class="py-4 text-center text-xs text-red-400">{{ error }}</p>
         <p v-else-if="filteredExercises.length === 0" class="py-4 text-center text-xs text-zinc-500">No exercises found.</p>
 
-        <button
-          v-for="ex in filteredExercises"
-          :key="ex.$id"
-          type="button"
+        <button v-for="ex in filteredExercises" :key="ex.$id" type="button"
           class="w-full rounded-xl border p-3 text-left transition"
           :class="selectedExercise?.$id === ex.$id ? 'border-primary bg-primary-muted' : 'border-surface-border bg-background/30 hover:border-primary/40'"
-          @click="pickExercise(ex)"
-        >
+          @click="pickExercise(ex)">
           <div class="flex items-center justify-between">
             <span class="font-medium text-white">{{ ex.name }}</span>
             <span class="rounded bg-surface-border/50 px-2 py-0.5 text-[10px] uppercase text-zinc-300">
@@ -173,12 +155,9 @@ onMounted(loadAllExercises)
         <button type="button" class="rounded-xl border border-surface-border px-4 py-2 text-xs text-zinc-300 hover:bg-surface-hover" @click="emit('close')">
           Cancel
         </button>
-        <button
-          type="button"
-          :disabled="!selectedExercise"
+        <button type="button" :disabled="!selectedExercise"
           class="rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white disabled:opacity-50"
-          @click="handleConfirm"
-        >
+          @click="handleConfirm">
           Add to Calendar
         </button>
       </div>
