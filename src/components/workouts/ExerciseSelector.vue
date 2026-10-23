@@ -1,17 +1,19 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import { fetchPublicExerciseLibrary } from '@/stores/library'
+import { useExerciseSelector } from '@/composables/useExerciseSelector'
 import LoadingSpinner from '@/components/shared/LoadingSpinner.vue'
 
 const emit = defineEmits(['select'])
 
-const exercises = ref([])
+// this const is used to manage the state of the exercise selector component, 
+// including the list of exercises, loading state, error handling, and filtering based on user input. 
+// It also handles the selection of an exercise and emits an event when an exercise is selected.
+const { exercises, isLoading, error, loadExercises } = useExerciseSelector()
+
 const search = ref('')
 const category = ref('all')
 const selectedExerciseId = ref('')
-const isLoading = ref(false)
-const error = ref('')
-
+// The categories array defines the available exercise categories for filtering.
 const categories = [
   { value: 'all', label: 'All categories' },
   { value: 'chest', label: 'Chest' },
@@ -22,7 +24,7 @@ const categories = [
   { value: 'core', label: 'Core' },
   { value: 'cardio', label: 'Cardio' },
 ]
-
+// The filteredExercises computed property filters the list of exercises based on the search query and selected category.
 const filteredExercises = computed(() => {
   const query = search.value.trim().toLowerCase()
 
@@ -48,20 +50,7 @@ const filteredExercises = computed(() => {
     return matchesCategory && matchesSearch
   })
 })
-
-async function loadExercises() {
-  isLoading.value = true
-  error.value = ''
-
-  try {
-    exercises.value = await fetchPublicExerciseLibrary()
-  } catch {
-    error.value = 'Unable to load exercises.'
-  } finally {
-    isLoading.value = false
-  }
-}
-
+// The selectExercise function is called when an exercise is selected from the list.
 function selectExercise(exercise) {
   selectedExerciseId.value = exercise.$id
   emit('select', exercise)
@@ -77,16 +66,15 @@ onMounted(loadExercises)
             <label for="exercise-search" class="mb-2 block text-sm font-semibold text-zinc-300" > Search exercises </label>
             <input id="exercise-search" v-model="search" type="search" placeholder="Search by name, muscle, or equipment..." class="w-full rounded-xl border border-surface-border bg-background/60 px-4 py-3 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-primary focus:ring-2 focus:ring-primary/20" />
         </div>
-
-            <div>
-                <label for="exercise-category" class="mb-2 block text-sm font-semibold text-zinc-300" > Category </label>
-                <select id="exercise-category" v-model="category" class="w-full rounded-xl border border-surface-border bg-background/60 px-4 py-3 text-sm text-zinc-300 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" >
-                <option v-for="option in categories" :key="option.value" :value="option.value" >
-                    {{ option.label }}
-                </option>
-                </select>
-            </div>
-        </div>
+          <div>
+              <label for="exercise-category" class="mb-2 block text-sm font-semibold text-zinc-300" > Category </label>
+              <select id="exercise-category" v-model="category" class="w-full rounded-xl border border-surface-border bg-background/60 px-4 py-3 text-sm text-zinc-300 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" >
+              <option v-for="option in categories" :key="option.value" :value="option.value" >
+                  {{ option.label }}
+              </option>
+              </select>
+          </div>
+      </div>
     <p v-if="error" class="rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm text-red-200">
       {{ error }}
     </p>
@@ -106,7 +94,6 @@ onMounted(loadExercises)
         <div class="flex items-start justify-between gap-3">
           <div>
             <h3 class="font-semibold text-white"> {{ exercise.name }} </h3>
-
             <p class="mt-1 text-xs text-zinc-400"> {{ exercise.category }} · {{ exercise.equipment }} </p>
           </div>
 
