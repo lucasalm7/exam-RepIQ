@@ -1,5 +1,5 @@
 <script setup>
-defineProps({
+defineProps({//this defineprops is used to define the props that the component accepts. In this case, it defines four props: title, items, emptyMessage, and type. Each prop has a type and some have additional requirements or default values.
   title: {
     type: String,
     required: true
@@ -18,7 +18,7 @@ defineProps({
   }
 })
 
-defineEmits(['delete'])
+defineEmits(['delete'])//this defineemits is used to define the events that the component can emit. In this case, it defines a single event called delete, which is emitted when an item is deleted from the list.
 </script>
 
 <template>
@@ -26,11 +26,8 @@ defineEmits(['delete'])
     <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-3">{{ title }}</h3>
     <p v-if="items.length === 0" class="text-xs text-zinc-500">{{ emptyMessage }}</p>
     <ul v-else class="space-y-2">
-      <li
-        v-for="item in items"
-        :key="item.$id"
-        class="flex items-center justify-between rounded-lg bg-surface/50 p-2.5 text-xs text-zinc-200"
-      >
+      <li v-for="item in items" :key="item.$id"
+        class="flex items-center justify-between rounded-lg bg-surface/50 p-2.5 text-xs text-zinc-200">
         <div>
           <span class="font-medium text-white">{{ item.itemName }}</span>
           <span class="ml-2 rounded bg-surface-border/40 px-1.5 py-0.5 text-[10px] text-zinc-400">{{ item.sourceType }}</span>
@@ -45,12 +42,8 @@ defineEmits(['delete'])
               {{ item.parsedDetails?.calories }} kcal
             </template>
           </span>
-          <button
-            type="button"
-            class="text-zinc-500 hover:text-red-400 transition cursor-pointer"
-            title="Delete entry"
-            @click="$emit('delete', item.$id)"
-          >
+          <button type="button" class="text-zinc-500 hover:text-red-400 transition cursor-pointer"
+            title="Delete entry" @click="$emit('delete', item.$id)"> 
             ✕
           </button>
         </div>
