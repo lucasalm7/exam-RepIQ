@@ -1,7 +1,7 @@
 <script setup>
 import LoadingSpinner from '@/components/shared/LoadingSpinner.vue'
 
-defineProps({
+defineProps({// here we define that the component accepts props where exercises is an array, isAdmin is a boolean and isLoading is a boolean
   exercises: {
     type: Array,
     default: () => [],
@@ -46,7 +46,7 @@ const emit = defineEmits(['edit', 'delete'])
             <td class="px-5 py-4 text-zinc-300">{{ exercise.equipment }}</td>
 
             <td class="px-5 py-4 text-zinc-400">
-              {{
+              {{// here we check if the primaryMuscles property is an array, if it is we join the elements with a comma, otherwise we just display the value as is
                 Array.isArray(exercise.primaryMuscles)
                   ? exercise.primaryMuscles.join(', ')
                   : exercise.primaryMuscles
@@ -56,15 +56,13 @@ const emit = defineEmits(['edit', 'delete'])
             <td class="flex gap-2 px-5 py-4">
               <button type="button"
                 class="rounded-lg border border-primary/30 px-3 py-1.5 text-xs text-primary hover:bg-primary/10"
-                @click="emit('edit', exercise)"
-              >
+                @click="emit('edit', exercise)">
                 Edit
               </button>
 
               <button v-if="isAdmin" type="button" :disabled="isLoading"
                 class="rounded-lg border border-red-400/25 px-3 py-1.5 text-xs text-red-300 hover:bg-red-400/10 disabled:opacity-50"
-                @click="emit('delete', exercise.$id)"
-              >
+                @click="emit('delete', exercise.$id)">
                 Delete
               </button>
             </td>
