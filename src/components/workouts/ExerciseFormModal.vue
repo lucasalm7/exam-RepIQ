@@ -9,9 +9,10 @@ const props = defineProps({
   },
   isLoading: Boolean,
 })
-
+// emit is used to send events from the child component to the parent component, in this case we are defining that the component emits submit and close events
 const emit = defineEmits(['submit', 'close'])
-
+//form is a reactive object that holds the form data, 
+// we use reactive instead of ref because we want to be able to update the properties of the object directly
 const form = reactive({
   name: '',
   description: '',
@@ -21,7 +22,7 @@ const form = reactive({
   secondaryMuscles: '',
   isCardio: false,
 })
-
+// resetForm is a function that resets the form data to its initial state
 function resetForm() {
   Object.assign(form, {
     name: '',
@@ -33,7 +34,7 @@ function resetForm() {
     isCardio: false,
   })
 }
-
+// watch is a function that watches for changes in the editingExercise prop, and updates the form data accordingly
 watch(
   () => props.editingExercise,
   exercise => {
@@ -41,7 +42,7 @@ watch(
       resetForm()
       return
     }
-
+// if there is an exercise being edited, we populate the form with its data
     Object.assign(form, {
       name: exercise.name || '',
       description: exercise.description || '',
@@ -58,7 +59,7 @@ watch(
   },
   { immediate: true },
 )
-
+// submit is a function that emits the submit event with the form data, after processing the primary and secondary muscles to be arrays instead of strings
 function submit() {
   emit('submit', {
     name: form.name,
@@ -82,8 +83,7 @@ function submit() {
   <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
     <form
       class="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-surface-border bg-background p-6 shadow-glass"
-      @submit.prevent="submit"
-    >
+      @submit.prevent="submit">
       <div class="mb-6 flex items-start justify-between border-b border-surface-border pb-4">
         <div>
           <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Exercise library</p>
