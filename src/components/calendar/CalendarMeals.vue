@@ -58,38 +58,27 @@ onMounted(loadAllMeals)
 
       <!-- Source Filter Tabs -->
       <div class="mt-4 flex rounded-xl border border-surface-border bg-background/60 p-1">
-        <button
-          type="button"
+        <button type="button"
           class="flex-1 rounded-lg py-1.5 text-xs font-semibold transition"
           :class="selectedTab === 'all' ? 'bg-primary text-white' : 'text-zinc-400 hover:text-white'"
-          @click="selectedTab = 'all'"
-        >
+          @click="selectedTab = 'all'">
           All
         </button>
-        <button
-          type="button"
-          class="flex-1 rounded-lg py-1.5 text-xs font-semibold transition"
+        <button type="button" class="flex-1 rounded-lg py-1.5 text-xs font-semibold transition"
           :class="selectedTab === 'preset' ? 'bg-primary text-white' : 'text-zinc-400 hover:text-white'"
-          @click="selectedTab = 'preset'"
-        >
+          @click="selectedTab = 'preset'">
           Presets
         </button>
-        <button
-          type="button"
-          class="flex-1 rounded-lg py-1.5 text-xs font-semibold transition"
+        <button type="button" class="flex-1 rounded-lg py-1.5 text-xs font-semibold transition"
           :class="selectedTab === 'personal' ? 'bg-primary text-white' : 'text-zinc-400 hover:text-white'"
-          @click="selectedTab = 'personal'"
-        >
+          @click="selectedTab = 'personal'">
           My Meals
         </button>
       </div>
 
       <!-- Search Input -->
       <div class="mt-4">
-        <input
-          v-model="search"
-          type="search"
-          placeholder="Search meals..."
+        <input v-model="search" type="search" placeholder="Search meals..."
           class="w-full rounded-xl border border-surface-border bg-background/60 px-3 py-2 text-sm text-white outline-none focus:border-primary"
         />
       </div>
@@ -102,14 +91,10 @@ onMounted(loadAllMeals)
         <p v-else-if="error" class="py-4 text-center text-xs text-red-400">{{ error }}</p>
         <p v-else-if="filteredMeals.length === 0" class="py-4 text-center text-xs text-zinc-500">No meals found.</p>
 
-        <button
-          v-for="meal in filteredMeals"
-          :key="meal.$id"
-          type="button"
+        <button v-for="meal in filteredMeals" :key="meal.$id" type="button"
           class="w-full rounded-xl border p-3 text-left transition"
           :class="selectedMeal?.$id === meal.$id ? 'border-primary bg-primary-muted' : 'border-surface-border bg-background/30 hover:border-primary/40'"
-          @click="pickMeal(meal)"
-        >
+          @click="pickMeal(meal)"> 
           <div class="flex items-center justify-between">
             <span class="font-medium text-white">{{ meal.name }}</span>
             <span class="rounded bg-surface-border/50 px-2 py-0.5 text-[10px] uppercase text-zinc-300">
@@ -127,12 +112,9 @@ onMounted(loadAllMeals)
         <button type="button" class="rounded-xl border border-surface-border px-4 py-2 text-xs text-zinc-300 hover:bg-surface-hover" @click="emit('close')">
           Cancel
         </button>
-        <button
-          type="button"
-          :disabled="!selectedMeal"
+        <button type="button" :disabled="!selectedMeal"
           class="rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white disabled:opacity-50"
-          @click="handleConfirm"
-        >
+          @click="handleConfirm">
           Add to Calendar
         </button>
       </div>
