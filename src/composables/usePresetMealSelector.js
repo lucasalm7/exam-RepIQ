@@ -1,6 +1,11 @@
 import { computed, onMounted, ref } from 'vue'
 import { fetchPublicPresetMeals } from '@/stores/library'
 
+//the step by step of this function is as follows:
+//1. define the reactive variables meals, search, selectedMealId, isLoading, error, and category using ref()
+//2. define the categories array with the available meal categories
+//3. define the filteredMeals computed property that filters the meals based on the search query and selected category
+//4. define the loadMeals function that fetches the preset meals from the API and updates the meals variable, handling loading state and errors
 export function usePresetMealSelector() {
   const meals = ref([])
   const search = ref('')
