@@ -29,8 +29,8 @@ async function handleLogin() {
 
 // Step 1 Cache
 function handleStepOneNext(data) {
-  stepOneData.value = data
-  step.value = 2
+  stepOneData.value = data // we cache the data from Step 1 to use in Step 2
+  step.value = 2 // Move to Step 2
 }
 
 // Step 2 Submission (Creates Auth Account + Profiles Document)
