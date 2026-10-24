@@ -1,7 +1,7 @@
 <script setup>
 import { reactive, ref } from 'vue'
 import LoadingSpinner from '@/components/shared/LoadingSpinner.vue'
-import { calculateBMR } from '@./composables/usetdeecalculator.js'
+import { calculateBMR } from '@/composables/useTdeeCalculator.js'
 
 const emit = defineEmits(['submit', 'back'])
 
