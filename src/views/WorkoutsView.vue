@@ -12,6 +12,9 @@ const editingExercise = ref(null)
 
 const selectedGlobalExercise = ref(null)
 
+//the functions bellow are used to handle the selection of a global exercise, 
+// starting the process of adding or editing an exercise, closing the exercise form, 
+// submitting the exercise data, and deleting an exercise.
 function handleGlobalExerciseSelect(exercise) {
   selectedGlobalExercise.value = exercise
 }
@@ -31,6 +34,7 @@ function closeExerciseForm() {
   showExerciseForm.value = false
 }
 
+// the function below handles the submission of exercise data, either updating an existing exercise or adding a new one, and then closes the form.
 async function handleExerciseSubmit(exerciseData) {
   try {
     if (editingExercise.value) {
