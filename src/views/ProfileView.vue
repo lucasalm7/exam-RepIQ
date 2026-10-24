@@ -11,6 +11,7 @@ const saveSuccess = ref(false)
 const errorMessage = ref('')
 
 // Reactive form state matching Appwrite profiles schema
+// its reactive because we want to bind it to the form inputs and have the UI update automatically when the values change. 
 const form = reactive({
   username: '',
   height: 175,
