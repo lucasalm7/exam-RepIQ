@@ -4,22 +4,23 @@ import { useAdminStore } from '@/stores/admin'
 import { usePermissions } from '@/composables/usePermissions'
 import { useModalState } from '@/composables/useModalState'
 import { useAuthStore } from '@/stores/auth'
-
+// we import the components for the exercise and meal management
+// these are reused components that handle the display and form modals for exercises and meals
 import ExerciseTable from '@/components/workouts/ExerciseTable.vue'
 import ExerciseFormModal from '@/components/workouts/ExerciseFormModal.vue'
 import MealTable from '@/components/meals/MealTable.vue'
 import MealFormModal from '@/components/meals/MealFormModal.vue'
-
+// we import the stores for admin, auth, and permissions
 const adminStore = useAdminStore()
 const { isAdmin } = usePermissions()
 const authStore = useAuthStore()
-
+// we define reactive references for the active tab, search queries, and category filters for exercises and meals
 const activeTab = ref('exercises')
 const exerciseSearch = ref('')
 const exerciseCategoryFilter = ref('all')
 const mealSearch = ref('')
 const mealCategoryFilter = ref('all')
-
+// we use the useModalState composable to manage the state of the exercise and meal modals
 const {
   isOpen: isExerciseModalOpen,
   editingItem: editingExercise,
@@ -33,14 +34,15 @@ const {
   open: openMealModal,
   close: closeMealModal,
 } = useModalState()
-
+// we use onmounted which means that when the component is mounted, we fetch the exercise and meal libraries from the admin store. 
+// This ensures that the data is available for display in the tables.
 onMounted(async () => {
   await Promise.all([
     adminStore.fetchExerciseLibrary(),
     adminStore.fetchPresetMealLibrary(),
   ])
 })
-
+// we define computed properties for filtered exercises and meals based on the search queries and category filters.
 const filteredExercises = computed(() => {
   const query = exerciseSearch.value.toLowerCase()
 
@@ -54,7 +56,7 @@ const filteredExercises = computed(() => {
     return matchesSearch && matchesCategory
   })
 })
-
+// we define a computed property for filtered meals based on the search query and category filter.
 const filteredMeals = computed(() => {
   const query = mealSearch.value.toLowerCase()
 
@@ -68,7 +70,7 @@ const filteredMeals = computed(() => {
     return matchesSearch && matchesCategory
   })
 })
-
+// we define an asynchronous function to save an exercise. It checks if we are editing an existing exercise or adding a new one, and calls the appropriate method from the admin store. After saving, it closes the modal.
 async function saveExercise(payload) {
   try {
     if (editingExercise.value) {
@@ -88,7 +90,7 @@ async function saveExercise(payload) {
     // adminStore.error displays the error
   }
 }
-
+// we define an asynchronous function to save a meal. It checks if we are editing an existing meal or adding a new one, and calls the appropriate method from the admin store. After saving, it closes the modal.
 async function saveMeal(payload) {
   try {
     if (editingMeal.value) {
@@ -108,7 +110,7 @@ async function saveMeal(payload) {
     // adminStore.error displays the error
   }
 }
-
+// we define asynchronous functions to delete exercises and meals. They prompt the user for confirmation before calling the appropriate delete method from the admin store. If an error occurs, it is displayed via the admin store's error handling.
 async function deleteExercise(id) {
   if (!confirm('Are you sure you want to delete this exercise?')) return
 
@@ -118,7 +120,7 @@ async function deleteExercise(id) {
     // adminStore.error displays the error
   }
 }
-
+// we define an asynchronous function to delete a meal. It prompts the user for confirmation before calling the deletePresetMeal method from the admin store. If an error occurs, it is displayed via the admin store's error handling.
 async function deleteMeal(id) {
   if (!confirm('Are you sure you want to delete this meal?')) return
 
