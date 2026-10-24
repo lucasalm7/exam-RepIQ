@@ -23,13 +23,14 @@ const targets = computed(() => {
 
 // Calories SVG Ring Parameters
 const radius = 38
+// Circumference of the circle for stroke-dasharray
 const circumference = 2 * Math.PI * radius
-
+// Calculate the percentage of calories consumed relative to the target
 const caloriePercentage = computed(() => {
   if (!targets.value.calories) return 0
   return Math.min(100, Math.round((logsStore.totalDailyCalories / targets.value.calories) * 100))
 })
-
+// Calculate the stroke-dashoffset for the SVG circle to represent the progress visually
 const strokeDashoffset = computed(() => {
   const progress = caloriePercentage.value / 100
   return circumference * (1 - progress)
@@ -51,7 +52,7 @@ onMounted(() => {
     logsStore.fetchCalendarByDate(logsStore.selectedDate)
   }
 })
-
+// Watch for changes in the selected date and fetch the corresponding calendar data
 watch(
   () => logsStore.selectedDate,
   (newDate) => {
@@ -81,26 +82,11 @@ watch(
         <div class="relative flex items-center justify-center w-28 h-28 sm:w-32 sm:h-32">
           <svg class="w-full h-full -rotate-90 transform" viewBox="0 0 100 100">
             <!-- Background Track -->
-            <circle
-              cx="50"
-              cy="50"
-              :r="radius"
-              class="stroke-background/80"
-              stroke-width="8"
-              fill="transparent"
-            />
+            <circle cx="50" cy="50" :r="radius" class="stroke-background/80" stroke-width="8" fill="transparent"/>
             <!-- Animated Progress Bar -->
-            <circle
-              cx="50"
-              cy="50"
-              :r="radius"
-              class="stroke-amber-400 transition-all duration-500 ease-out"
-              stroke-width="8"
-              stroke-linecap="round"
-              fill="transparent"
-              :stroke-dasharray="circumference"
-              :stroke-dashoffset="strokeDashoffset"
-            />
+            <circle cx="50" cy="50" :r="radius" class="stroke-amber-400 transition-all duration-500 ease-out"
+              stroke-width="8" stroke-linecap="round" fill="transparent"
+              :stroke-dasharray="circumference" :stroke-dashoffset="strokeDashoffset" />
           </svg>
 
           <!-- Center Calorie Text -->
@@ -128,10 +114,8 @@ watch(
             </span>
           </div>
           <div class="h-2 w-full rounded-full bg-background/60 overflow-hidden">
-            <div
-              class="h-full bg-rose-400 transition-all duration-500 rounded-full"
-              :style="{ width: `${proteinPercentage}%` }"
-            />
+            <div class="h-full bg-rose-400 transition-all duration-500 rounded-full"
+              :style="{ width: `${proteinPercentage}%` }" />
           </div>
         </div>
 
@@ -144,10 +128,8 @@ watch(
             </span>
           </div>
           <div class="h-2 w-full rounded-full bg-background/60 overflow-hidden">
-            <div
-              class="h-full bg-sky-400 transition-all duration-500 rounded-full"
-              :style="{ width: `${carbsPercentage}%` }"
-            />
+            <div class="h-full bg-sky-400 transition-all duration-500 rounded-full"
+              :style="{ width: `${carbsPercentage}%` }" />
           </div>
         </div>
 
@@ -160,10 +142,8 @@ watch(
             </span>
           </div>
           <div class="h-2 w-full rounded-full bg-background/60 overflow-hidden">
-            <div
-              class="h-full bg-emerald-400 transition-all duration-500 rounded-full"
-              :style="{ width: `${fatsPercentage}%` }"
-            />
+            <div class="h-full bg-emerald-400 transition-all duration-500 rounded-full"
+              :style="{ width: `${fatsPercentage}%` }"/>
           </div>
         </div>
       </div>
