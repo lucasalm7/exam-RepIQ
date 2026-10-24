@@ -2,7 +2,8 @@ import { computed, ref } from 'vue'
 import { databases, DATABASE_ID, COLLECTIONS } from '@/lib/appwrite'
 import { Query } from 'appwrite'
 import { useCalendarExercises } from '@/composables/useCalendarSelectors'
-
+// This composable fetches the logged workouts for the focused week and determines which muscle categories were targeted.
+//useMuscleHeatmap is designed to be used in components that need to display a muscle heatmap based on the user's logged exercises for the selected week.
 export function useMuscleHeatmap(authStore, logsStore) {
   const { allExercises, loadAllExercises } = useCalendarExercises()
   const isLoading = ref(false)
@@ -39,7 +40,7 @@ export function useMuscleHeatmap(authStore, logsStore) {
         await loadAllExercises()
       }
 
-      const categoryMap = new Map()
+      const categoryMap = new Map()// Map exercise IDs to their categories for quick lookup
       allExercises.value.forEach(ex => {
         if (ex.$id && ex.category) {
           categoryMap.set(ex.$id, ex.category.toLowerCase())
@@ -55,7 +56,7 @@ export function useMuscleHeatmap(authStore, logsStore) {
           Query.equal('date', activeWeekDates.value),
         ]
       )
-
+// Create a set to store unique muscle categories targeted during the week
       const activeSet = new Set()
       response.documents.forEach(doc => {
         const category = categoryMap.get(doc.itemId)
