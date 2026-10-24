@@ -29,18 +29,18 @@ function calculateAge(birthdate) {
   return Math.abs(ageDate.getUTCFullYear() - 1970)
 }
 
-// Mifflin-St Jeor BMR & TDEE Calculation
+// BMR & TDEE Calculation
 function calculateMetrics() {
   const weightKg = Number(form.weight)
   const heightCm = Number(form.height)
   const age = calculateAge(form.birthdate)
   
-  // Normalize gender to match what calculateBMR expects ('male' or 'female')
+  // Determine sex for BMR calculation
   const sex = form.gender === 'female' ? 'female' : 'male'
 
-  // Reuse the centralized BMR utility function
+  // Calculate BMR pulled from the useTdeeCalculator.js composable
   const bmr = calculateBMR({ weightKg, heightCm, age, sex })
-
+// Activity multipliers for TDEE calculation
   const multipliers = {
     sedentary: 1.2,
     light: 1.375,
@@ -48,7 +48,7 @@ function calculateMetrics() {
     active: 1.725,
     very_active: 1.9,
   }
-
+// Calculate TDEE using the BMR, 1.55 multiplier for moderate activity level, and the selected activity level multiplier.
   const tdee = bmr * (multipliers[form.activityLevel] || 1.55)
 
   return {
@@ -56,7 +56,7 @@ function calculateMetrics() {
     tdee: Math.round(tdee),
   }
 }
-
+// Handle form submission
 function handleSubmit() {
   localError.value = ''
 
@@ -83,9 +83,9 @@ function handleSubmit() {
       <span class="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-white">2</span>
       <span>Profile metrics</span>
     </div>
-
+    <!-- v-if because the error message should only be displayed when there is an error -->
     <p v-if="localError" class="mb-5 rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm text-red-200" role="alert">{{ localError }}</p>
-
+    <!-- prevent here to avoid form submission on Enter key press -->
     <form class="space-y-4" @submit.prevent="handleSubmit">
       <div>
         <label for="birthdate" class="mb-2 block text-sm font-medium text-zinc-300">Date of birth</label>
