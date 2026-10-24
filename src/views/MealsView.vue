@@ -14,7 +14,11 @@ const editingMeal = ref(null)
 function handleMealSelect(meal) {
   selectedMeal.value = meal
 }
-
+//step by step of the function handleMealSubmit:
+// 1. The function is declared as an asynchronous function that takes a meal object as an argument.
+// 2. Inside a try block, it checks if there is an editingMeal (i.e., if the user is editing an existing meal). If so, it calls the updateUserMeal method from the mealsStore, passing the meal's ID and the updated meal object. If not, it calls the addUserMeal method to add a new meal.
+// 3. After successfully adding or updating the meal, it resets the editingMeal to null and hides the meal form by setting showMealForm to false.
+// 4. If an error occurs during the add or update process, it catches the error and can display an error message in the modal (though the actual error handling is not implemented
 async function handleMealSubmit(meal) {
   try {
     if (editingMeal.value) {
@@ -32,17 +36,26 @@ async function handleMealSubmit(meal) {
     // display error message in the modal
   }
 }
-
+//step by step of the function startEditingMeal:
+// 1. The function is declared to take a meal object as an argument.
+// 2. It sets the editingMeal ref to the passed meal object, indicating that this meal is currently being edited.
+// 3. It sets the showMealForm ref to true, which will trigger the display of the meal form modal for editing or adding a meal.
 function startEditingMeal(meal) {
   editingMeal.value = meal
   showMealForm.value = true
 }
-
+//step by step of the function closeMealForm:
+// 1. The function is declared without any parameters.
+// 2. It resets the editingMeal ref to null, indicating that no meal is currently being edited.
+// 3. It sets the showMealForm ref to false, which will hide the meal form modal from the user interface.
 function closeMealForm() {
   editingMeal.value = null
   showMealForm.value = false
 }
-
+//step by step of the function handleDeleteMeal:
+// 1. The function is declared as an asynchronous function that takes a mealId as an argument.
+// 2. It prompts the user with a confirmation dialog asking if they want to delete the meal. If the user cancels, the function returns early and does nothing.
+// 3. If the user confirms, it calls the deleteUserMeal method from the mealsStore, passing the mealId to delete the specified meal from the user's meal list.
 async function handleDeleteMeal(mealId) {
   if (!confirm('Delete this meal?')) return
 
