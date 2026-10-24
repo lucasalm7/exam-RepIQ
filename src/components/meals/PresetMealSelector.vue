@@ -13,7 +13,8 @@ const {
   categories,
   filteredMeals,
 } = usePresetMealSelector()
-
+//this function is called when a meal is selected from the list. ^
+// It updates the selectedMealId and emits the 'select' event with the selected meal.
 function selectMeal(meal) {
   selectedMealId.value = meal.$id
   emit('select', meal)
