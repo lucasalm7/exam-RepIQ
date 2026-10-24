@@ -1,85 +1,14 @@
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
-import { databases, DATABASE_ID, COLLECTIONS } from '@/lib/appwrite'
-import { Query } from 'appwrite'
+import { computed, onMounted, watch } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useLogsStore } from '@/stores/logs'
-import { useCalendarExercises } from '@/composables/useCalendarSelectors'
+import { useMuscleHeatmap } from '@/composables/useMuscleHeatmap'
 import LoadingSpinner from '@/components/shared/LoadingSpinner.vue'
 
 const authStore = useAuthStore()
 const logsStore = useLogsStore()
-const { allExercises, loadAllExercises } = useCalendarExercises()
 
-const isLoading = ref(false)
-const weeklyCategories = ref(new Set())
-
-// Calculate the 7-day Monday–Sunday week based on logsStore.selectedDate
-const activeWeekDates = computed(() => {
-  const baseDate = logsStore.selectedDate ? new Date(logsStore.selectedDate) : new Date()
-  
-  const dayOfWeek = baseDate.getDay()
-  const distanceToMon = dayOfWeek === 0 ? -6 : 1 - dayOfWeek
-
-  const monday = new Date(baseDate)
-  monday.setDate(baseDate.getDate() + distanceToMon)
-
-  const dates = []
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(monday)
-    d.setDate(monday.getDate() + i)
-    dates.push(d.toISOString().split('T')[0])
-  }
-  return dates
-})
-
-// Fetch logged workouts for the focused week
-async function fetchWeeklyTargetedMuscles() {
-  const userId = authStore.userProfile?.$id || authStore.user?.$id
-  if (!userId) return
-
-  isLoading.value = true
-
-  try {
-    if (allExercises.value.length === 0) {
-      await loadAllExercises()
-    }
-
-    const categoryMap = new Map()
-    allExercises.value.forEach(ex => {
-      if (ex.$id && ex.category) {
-        categoryMap.set(ex.$id, ex.category.toLowerCase())
-      }
-    })
-
-    // Fetch logs across the entire active week calculated in activeWeekDates
-    const response = await databases.listDocuments(
-      DATABASE_ID,
-      COLLECTIONS.CALENDAR,
-      [
-        Query.equal('userId', userId),
-        Query.equal('type', 'exercise'),
-        Query.equal('date', activeWeekDates.value),
-      ]
-    )
-
-    const activeSet = new Set()
-    response.documents.forEach(doc => {
-      const category = categoryMap.get(doc.itemId)
-      if (category) {
-        activeSet.add(category)
-      } else if (doc.parsedDetails?.category) {
-        activeSet.add(doc.parsedDetails.category.toLowerCase())
-      }
-    })
-
-    weeklyCategories.value = activeSet
-  } catch (err) {
-    console.error('Failed to load weekly muscle heatmap:', err)
-  } finally {
-    isLoading.value = false
-  }
-}
+const { isLoading, weeklyCategories, fetchWeeklyTargetedMuscles } = useMuscleHeatmap(authStore, logsStore)
 
 const isChestActive = computed(() => weeklyCategories.value.has('chest'))
 const isBackActive = computed(() => weeklyCategories.value.has('back'))
@@ -92,7 +21,7 @@ onMounted(() => {
   fetchWeeklyTargetedMuscles()
 })
 
-// Watch for date changes (switching days/weeks in WeeklyCalendar.vue)
+// Watch for date changes (switching days/weeks)
 watch(
   () => logsStore.selectedDate,
   () => {
@@ -228,7 +157,7 @@ watch(() => authStore.user?.$id, () => {
       </div>
     </div>
 
-    <!-- Category Indicators Legend (Adjusts 2-col on narrow, 3-col on wider space) -->
+    <!-- Category Indicators Legend -->
     <div class="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 border-t border-surface-border/50 pt-3">
       <div 
         v-for="cat in ['chest', 'back', 'legs', 'shoulders', 'arms', 'core']" 
