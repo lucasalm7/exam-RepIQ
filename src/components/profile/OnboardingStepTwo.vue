@@ -1,6 +1,7 @@
 <script setup>
 import { reactive, ref } from 'vue'
 import LoadingSpinner from '@/components/shared/LoadingSpinner.vue'
+import { calculateBMR } from '@./composables/usetdeecalculator.js'
 
 const emit = defineEmits(['submit', 'back'])
 
@@ -30,12 +31,15 @@ function calculateAge(birthdate) {
 
 // Mifflin-St Jeor BMR & TDEE Calculation
 function calculateMetrics() {
-  const weight = Number(form.weight)
-  const height = Number(form.height)
+  const weightKg = Number(form.weight)
+  const heightCm = Number(form.height)
   const age = calculateAge(form.birthdate)
+  
+  // Normalize gender to match what calculateBMR expects ('male' or 'female')
+  const sex = form.gender === 'female' ? 'female' : 'male'
 
-  let bmr = 10 * weight + 6.25 * height - 5 * age
-  bmr = form.gender === 'male' ? bmr + 5 : bmr - 161
+  // Reuse the centralized BMR utility function
+  const bmr = calculateBMR({ weightKg, heightCm, age, sex })
 
   const multipliers = {
     sedentary: 1.2,
