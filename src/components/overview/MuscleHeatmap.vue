@@ -7,16 +7,16 @@ import LoadingSpinner from '@/components/shared/LoadingSpinner.vue'
 
 const authStore = useAuthStore()
 const logsStore = useLogsStore()
-
+// Use the custom composable to manage muscle heatmap data and loading state
 const { isLoading, weeklyCategories, fetchWeeklyTargetedMuscles } = useMuscleHeatmap(authStore, logsStore)
-
+// Computed properties to determine if specific muscle groups are active based on the weeklyCategories set
 const isChestActive = computed(() => weeklyCategories.value.has('chest'))
 const isBackActive = computed(() => weeklyCategories.value.has('back'))
 const isLegsActive = computed(() => weeklyCategories.value.has('legs'))
 const isShouldersActive = computed(() => weeklyCategories.value.has('shoulders'))
 const isArmsActive = computed(() => weeklyCategories.value.has('arms'))
 const isCoreActive = computed(() => weeklyCategories.value.has('core'))
-
+// Fetch the weekly targeted muscles when the component is mounted
 onMounted(() => {
   fetchWeeklyTargetedMuscles()
 })
