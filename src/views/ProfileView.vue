@@ -2,6 +2,7 @@
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import LoadingSpinner from '@/components/shared/LoadingSpinner.vue'
+import { calculateBMR } from '@/composables/useTdeeCalculator'
 
 const authStore = useAuthStore()
 
@@ -32,12 +33,16 @@ onMounted(() => {
   form.isPrivate = Boolean(profile.isPrivate)
 })
 
-// Dynamic calculation for BMR & TDEE
+// Dynamic calculation for BMR & TDEE leveraging the shared composable utility
 const estimatedBmr = computed(() => {
   if (!form.weight || !form.height) return 0
   const age = form.birthDate ? calculateAge(form.birthDate) : 25
-  const base = 10 * Number(form.weight) + 6.25 * Number(form.height) - 5 * age
-  return Math.round(form.gender === 'female' ? base - 161 : base + 5)
+  return calculateBMR({
+    weightKg: Number(form.weight),
+    heightCm: Number(form.height),
+    age,
+    sex: form.gender,
+  })
 })
 
 const estimatedTdee = computed(() => {
