@@ -37,7 +37,7 @@ const emit = defineEmits(['edit', 'delete'])
           </tr>
           <template v-else>
           <tr v-for="meal in meals" :key="meal.$id" class="transition hover:bg-surface-hover/40" >
-            <td class="px-5 py-4 font-semibold text-white"> {{ meal.name }} </td>
+            <td class="px-5 py-4 font-semibold text-white"> {{ meal.name }} </td><!-- meal name is grabbed from the meal object imported from the API -->
             <td class="px-5 py-4 text-primary"> {{ meal.category }} </td>
             <td class="px-5 py-4 text-zinc-300"> {{ meal.servingSize }} </td>
             <td class="px-5 py-4 font-mono text-xs text-zinc-400"> {{ meal.protein }}g / {{ meal.carbs }}g / {{ meal.fats }}g </td>
