@@ -1,24 +1,25 @@
 <script setup>
 import { reactive, ref } from 'vue'
-
+// This component is the first step of the onboarding process, 
+// where users provide their account details (username, email, and password).
 const emit = defineEmits(['next'])
-
+//emit and form are used to manage the state of the form and emit the next event when the user submits the form.
 const form = reactive({
   username: '',
   email: '',
   password: '',
 })
-
+// localError is a ref that holds any validation error messages for the form.
 const localError = ref('')
-
+// handleNext is a function that validates the form inputs and emits the next event with the form data if validation passes.
 function handleNext() {
   localError.value = ''
-
+// Validate that all fields are filled in and that the password meets the minimum length requirement.
   if (!form.username.trim() || !form.email.trim() || !form.password) {
     localError.value = 'Please fill in all fields.'
     return
   }
-
+// Validate that the password is at least 8 characters long.
   if (form.password.length < 8) {
     localError.value = 'Password must be at least 8 characters.'
     return
