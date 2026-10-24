@@ -1,7 +1,8 @@
 <script setup>
 import { reactive, watch } from 'vue'
 import LoadingSpinner from '@/components/shared/LoadingSpinner.vue'
-
+//here we define the props that the MealFormModal component accepts. 
+// The editingMeal prop is an object that represents the meal being edited, and isLoading is a boolean that indicates whether the form is currently submitting data.
 const props = defineProps({
   editingMeal: {
     type: Object,
@@ -11,7 +12,8 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['submit', 'close'])
-
+//this const is used to store the form data for the meal being added or edited. 
+// It is reactive, meaning that any changes to its properties will automatically update the UI.
 const form = reactive({
   name: '',
   category: 'lunch',
@@ -22,7 +24,7 @@ const form = reactive({
   fats: 0,
   instructions: '',
 })
-
+//this function resets the form data to its initial state, clearing any values that may have been entered by the user.
 function resetForm() {
   Object.assign(form, {
     name: '',
@@ -36,6 +38,7 @@ function resetForm() {
   })
 }
 
+//this function watches the editingMeal prop and updates the form data accordingly.
 watch(
   () => props.editingMeal,
   meal => {
