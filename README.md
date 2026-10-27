@@ -1,4 +1,4 @@
-RepIQ — Advanced JavaScript & Vue 3 Project
+#RepIQ — Advanced JavaScript & Vue 3 Project
 
 RepIQ is a modern, responsive fitness and nutrition tracking application built with Vue 3 (Composition API), Pinia, Tailwind CSS, and Appwrite as the cloud backend platform. It enables regular users to plan workouts, log custom and system-verified meals, track macro targets dynamically, and monitor weekly muscle engagement via an interactive heatmap. It also features a secure administrative workspace for managing global system libraries.
 
