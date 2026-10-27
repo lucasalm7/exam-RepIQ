@@ -1,8 +1,8 @@
-#RepIQ — Advanced JavaScript & Vue 3 Project
+# RepIQ — Advanced JavaScript & Vue 3 Project
 
 RepIQ is a modern, responsive fitness and nutrition tracking application built with Vue 3 (Composition API), Pinia, Tailwind CSS, and Appwrite as the cloud backend platform. It enables regular users to plan workouts, log custom and system-verified meals, track macro targets dynamically, and monitor weekly muscle engagement via an interactive heatmap. It also features a secure administrative workspace for managing global system libraries.
 
-Live Links & Documentation
+### Live Links & Documentation
 
 Live Application: http://repiq.lucasalmeida.dk/
 
@@ -10,7 +10,8 @@ GitHub Repository: https://github.com/lucasalm7/exam-RepIQ
 
 UI/UX Design Wireframes (Figma): https://www.figma.com/design/QmRunibMsHh8NbnO2OqCfX/RepIQ?node-id=0-1&p=f&t=vT6OlffjqKCjSYlZ-0
 
-Architecture & Code Structure
+
+## Architecture & Code Structure
 
 The project follows a clean Separation of Concerns (SoC) and Single Responsibility Principle (SRP) design pattern:
 
@@ -22,7 +23,7 @@ Composables (src/composables/): Reusable reactive business logic and utility fun
 
 Components (src/components/): Modular, presentational (dumb) and interactive sub-components divided into logical feature directories (calendar, meals, overview, profile, workouts, shared).
 
-Appwrite Backend & Data Structure
+## Appwrite Backend & Data Structure
 
 RepIQ uses Appwrite as its cloud database and authentication platform. Primary data is stored securely in remote collections rather than local storage:
 
@@ -38,21 +39,21 @@ meals: User-created custom nutrition logs and recipes.
 
 calendar: Centralized activity scheduling collection that tracks daily workout and meal items linked to specific dates and users, enabling the weekly overview map and muscle heatmap calculations.
 
-Security & Permissions
+## Security & Permissions
 
 Frontend: Protected router routes and navigation guards (router/index.js) verify session validity and user profiles before granting access.
 
 Backend: Appwrite document-level permissions (Permission.read/update/delete(Role.user(userId))) ensure users can only modify their own personal records, while administrative endpoints enforce strict role checks (isAdmin / team).
 
-AI-Assisted Development & Reflection
+## AI-Assisted Development & Reflection
 
-As part of modern software engineering workflows, AI tools (such as Claude and ChatGPT) were utilized during the development of RepIQ. Below is the required reflection for the oral examination:
+As part of modern software engineering workflows, AI tools (such as Claude and ChatGPT) were utilized during the development of RepIQ.
 
 1. Tools Used
 
 AI Models: Claude (Anthropic) and ChatGPT (OpenAI).
 
-Primary Use Cases: Architectural brainstorming, drafting complex reactive composable logic (such as date-range calculations in useWeeklyCalendar.js and matrix mapping in useMuscleHeatmap.js), debugging asynchronous Appwrite query filters, and structuring Tailwind CSS layouts.
+Primary Use Cases: Architectural brainstorming, drafting complex reactive composable logic (such as date-range calculations in useWeeklyCalendar.js and matrix mapping in useMuscleHeatmap.js) and debugging asynchronous Appwrite query filters.
 
 2. Example Where AI Helped
 
